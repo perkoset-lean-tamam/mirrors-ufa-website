@@ -1,0 +1,30 @@
+---
+description: "Visual constraints for the mirror landing: luxury, organic, no AI-slop"
+globs: ["**/*.astro", "**/*.tsx", "**/*.jsx", "**/*.css"]
+alwaysApply: false
+---
+
+# Design Constraints
+
+## Forbidden
+- Purple/blue gradients, "gradient orbs", glassmorphism on colored backgrounds.
+- Three identical cards with icons in a row under the hero.
+- Centering all headings and paragraphs. Only hero headline and primary CTA may be centered.
+- `shadow-md` or any generic Tailwind shadow on every card. Use `shadow-reflection` (see DESIGN.md).
+- Inter, Roboto, Arial, system-ui as primary typefaces.
+- Emoji in UI.
+- Stock SVG illustrations. Use real photography.
+
+## Required
+- Use only tokens from `@DESIGN.md`.
+- Every mirror image gets `shadow-reflection` on its container.
+- Prefer asymmetry: 7/5 or 8/4 splits, hairline rules.
+- Micro-interactions: subtle translateY(-2px) + shadow deepening on hover.
+- Generous vertical rhythm: `py-section` between sections.
+
+## Tailwind usage
+- **Only** these colors exist: `bg-background`, `bg-surface`, `bg-brass`, `text-ink`, `text-ink-muted`, `border-line`. Never `bg-gray-*`, `text-slate-*`, `text-white`, `bg-black`.
+- **Only** `shadow-reflection` and `shadow-none`. No `shadow-md`, `shadow-lg`, `shadow-xl`.
+- **Only** `rounded-none`, `rounded-sm` (2px), `rounded` (4px). No `rounded-lg`, `rounded-full`.
+- Spacing: `py-section`, `px-gutter` for section-level. No `py-24`, no arbitrary values.
+- Fonts: `font-display`, `font-body`. Never `font-serif`, `font-sans`.

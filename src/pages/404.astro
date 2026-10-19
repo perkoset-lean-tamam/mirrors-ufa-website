@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Страница не найдена — Зеркала Уфы"
+  description="Такой страницы нет. Вернитесь на главную — там всё о зеркалах на заказ в Уфе."
+>
+  <main
+    class="min-h-[100dvh] flex flex-col justify-center px-gutter bg-background"
+  >
+    <div class="max-w-[60ch]">
+      <p class="font-body text-xs uppercase tracking-[0.05em] text-ink-muted">
+        404
+      </p>
+      <h1
+        class="mt-4 font-display text-[clamp(2.5rem,6vw,5rem)] leading-[1.05] tracking-[-0.02em] text-ink"
+      >
+        Такой страницы нет
+      </h1>
+      <p
+        class="mt-6 font-body text-lg text-ink-muted leading-[1.55] max-w-[42ch]"
+      >
+        Возможно, ссылка устарела или в адресе опечатка. Вернитесь на главную —
+        там всё, что нужно.
+      </p>
+      <div class="mt-8">
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 rounded-sm bg-brass px-6 py-3 min-h-[44px] font-body text-surface transition-transform duration-[400ms] ease-out motion-safe:hover:translate-y-[-2px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
+          На главную
+        </a>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

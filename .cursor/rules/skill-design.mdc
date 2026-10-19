@@ -1,0 +1,72 @@
+---
+description: "Condensed anti-AI rules from Art Director Skill — only for landing page"
+globs: ["**/*.astro", "**/*.css"]
+alwaysApply: false
+---
+
+# .cursorrules AI Configuration
+
+## 🎨 Art Director Skill
+When generating frontend code, components, or UI designs, you MUST act as the Autonomous Art Director.
+Read and strictly follow the design system instructions found in: `.skills/design/skill.md`
+---
+description: "Condensed anti-AI design rules from Art Director Skill — only what applies to a mirror landing page"
+globs: ["**/*.astro", "**/*.css", "**/*.ts", "**/*.js"]
+alwaysApply: false
+---
+
+# Anti-AI Design — Condensed Rules for This Landing
+
+Reference for deep questions: `@.skills/design/skill.md`. Read it only when explicitly asked.
+
+## Layout
+- **No** `container mx-auto` or `max-w-7xl` as a default wrapper. Use `w-[90%] mx-auto` or `w-full px-[5%]`.
+- **No** 50/50 symmetric splits. Use 7/5, 8/4, or golden ratio (1:1.618).
+- **No** centered left-aligned text (left-aligned text inside a centered container = weird offset). Either center both or left-align both.
+- **No** three identical cards with icons in a row.
+- **No** "zig-zag" pattern (text-left/image-right, then image-left/text-right). Break the rhythm.
+- **No** "bento box" grid, no "stats bar" (counter 0→1M+), no generic testimonial grids, no pricing cards.
+- Hero must show value proposition + primary CTA **above the fold** (visible without scroll on mobile 375px and desktop 1440px).
+- Text blocks cap at `65ch` / `max-w-prose`. Body text left-aligned.
+
+## Typography
+- **No** Inter, Roboto, Arial, system-ui as primary. Use `font-display` (Cormorant) for headlines, `font-body` (Söhne) for everything else.
+- Display text (>48px): `tracking-[-0.02em]`, `leading-[1.0]`.
+- Body text: `leading-[1.55]`, minimum 16px.
+- **No** emojis in UI. No emoji bullet points, no emoji headers.
+- **No** gradient text. No glow text.
+- Uppercase only for small metadata/labels with `tracking-[0.05em]`. Never uppercase paragraphs.
+
+## Color & Shadow
+- **No** purple/blue gradients. **No** gradient orbs. **No** glassmorphism. **No** neon glow.
+- **No** `bg-gray-*`, `bg-slate-*`, `text-white`, `bg-black`. Only tokens: `bg-background`, `bg-surface`, `bg-brass`, `text-ink`, `text-ink-muted`, `border-line`.
+- **No** `shadow-md`, `shadow-lg`, `shadow-xl`. Only `shadow-reflection` (defined in DESIGN.md).
+- **No** dark mode. This is a light-theme gallery.
+- 60-30-10 rule: brass is <10% of the UI. Only one primary CTA per view.
+
+## Components
+- **No** pill buttons. Radii from DESIGN.md only: `rounded-none`, `rounded-sm` (2px), `rounded` (4px).
+- Buttons: minimum 44×44px hit area. `cursor-pointer` on all interactive elements.
+- **No** `outline: none` without replacement. Always `focus-visible:ring-2 ring-brass ring-offset-2`.
+- **No** placeholders as labels. Inputs (if any) have visible labels + `bg-surface` tint + 16px font-size on mobile (prevents iOS zoom).
+- **No** smooth scrolling hijack, no parallax with random speeds, no custom cursors.
+
+## Motion
+- Animate **only** `transform` and `opacity`. Never `width`, `height`, `margin`, `top`, `left`, `box-shadow`.
+- Use `cubic-bezier(0.16, 1, 0.3, 1)` (ease-out-expo) or `cubic-bezier(0.33, 1, 0.68, 1)`. **Never** `linear`.
+- Hover: `translateY(-2px)` + shadow deepening. **No** `scale(1.1)`, no color flashing.
+- Stagger reveals sequentially, not every element at once.
+- Respect `prefers-reduced-motion: reduce`.
+
+## Copy
+- **No** "elevate", "seamless", "unleash", "transform your space", "delve", "tapestry", "game-changer", "robust", "foster".
+- **No** "rule of three" (three parallel adjectives/clauses). One precise detail beats three vague ones.
+- **No** rhetorical questions in headings ("Ready to transform?" → forbidden).
+- CTA text = verb + object: "Написать в WhatsApp", "Заказать замер". Never "Узнать больше" / "Подробнее".
+- Concrete details over abstract adjectives: materials, dimensions, lead time, city.
+
+## Code
+- Semantic HTML: `<main>`, `<section>`, `<nav>`, `<footer>`. Not `<div>` soup.
+- All colors, spacing, radii via Tailwind tokens (see `tailwind.config.mjs`). **No** hardcoded hex in components.
+- SVG icons from `lucide-astro` only. **Never** generate raw SVG paths.
+- No `!important`. No inline styles.
