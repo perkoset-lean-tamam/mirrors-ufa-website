@@ -34,9 +34,13 @@ const works = [
 
 const services = [
   { num: '01', title: 'Изготовление и установка зеркал' },
-  { num: '02', title: 'Зеркала с подсветкой' },
-  { num: '03', title: 'Изделия из стекла' },
-  { num: '04', title: 'Изделия из закалённого стекла' },
+  { num: '02', title: 'Зеркала с подсветкой и подогревом' },
+  { num: '03', title: 'Душевые кабины из закалённого стекла' },
+  { num: '04', title: 'Стеклянные двери и перегородки' },
+  { num: '05', title: 'Изделия из стекла и триплекс' },
+  { num: '06', title: 'Замена стекла в межкомнатных дверях' },
+  { num: '07', title: 'Замена зеркал в шкафах-купе' },
+  { num: '08', title: 'Фотопечать и нанесение рисунка на стекло' },
 ];
 
 const currentYear = new Date().getFullYear();
@@ -63,8 +67,9 @@ const currentYear = new Date().getFullYear();
         <p
           class="font-body text-lg md:text-xl text-ink-muted max-w-[42ch] leading-[1.55]"
         >
-          Индивидуальные размеры, ручная огранка, доставка по Уфе и Уфимскому
-          району.
+          Изготовление и установка зеркал, душевых кабин, стеклянных
+          перегородок. Индивидуальные размеры, выезд замерщика по городу и
+          области.
         </p>
 
         <div class="flex flex-col gap-4 items-start">
@@ -119,8 +124,8 @@ const currentYear = new Date().getFullYear();
           <p
             class="mt-6 font-body text-ink-muted leading-[1.55] max-w-[36ch]"
           >
-            Изготавливаем зеркала и стеклянные изделия по индивидуальным
-            размерам. Работаем по Уфе и Уфимскому району.
+            Изготавливаем по вашим размерам и устанавливаем. Замер, доставка и
+            монтаж по Уфе и области.
           </p>
         </div>
 
@@ -260,6 +265,38 @@ const currentYear = new Date().getFullYear();
             {PHONE_DISPLAY}
           </span>
         </a>
+      </div>
+
+      <div class="mt-12 lg:mt-16 pt-8 border-t border-line">
+        <p class="font-body text-xs uppercase tracking-[0.05em] text-ink-muted">
+          Стоимость
+        </p>
+        <div
+          class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 max-w-[60ch]"
+        >
+          <div>
+            <p
+              class="font-display text-xl lg:text-2xl leading-[1.2] tracking-[-0.01em] text-ink"
+            >
+              Выезд замерщика
+            </p>
+            <p class="mt-2 font-body text-sm text-ink-muted leading-[1.55]">
+              500 ₽ в черте города. За пределы Уфы (Дёма, Затон и др.) — по
+              договорённости.
+            </p>
+          </div>
+          <div>
+            <p
+              class="font-display text-xl lg:text-2xl leading-[1.2] tracking-[-0.01em] text-ink"
+            >
+              Доставка
+            </p>
+            <p class="mt-2 font-body text-sm text-ink-muted leading-[1.55]">
+              600 ₽ по городу. Установка и монтаж — рассчитываются
+              индивидуально.
+            </p>
+          </div>
+        </div>
       </div>
 
       <div class="mt-12 lg:mt-16 pt-8 border-t border-line">
