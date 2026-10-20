@@ -1,0 +1,14 @@
+---
+description: "Human-sounding copy for the mirror brand"
+globs: ["**/*.md", "**/content/**", "**/*.json"]
+alwaysApply: false
+---
+
+# Copy Rules
+
+- Write as a craftsperson would speak: concrete details (materials, dimensions, lead time) over abstract adjectives.
+- Forbidden words: "elevate", "seamless", "unleash", "transform your space", "game-changer", "delve", "tapestry", "robust", "foster".
+- Avoid the "rule of three" (three parallel adjectives/clauses). One precise detail beats three vague ones.
+- No rhetorical questions in headings.
+- CTA text = verb + object: "Написать в WhatsApp", "Заказать замер". Never "Узнать больше" / "Подробнее".
+- For Russian copy: use em-dashes sparingly, as a human editor would.

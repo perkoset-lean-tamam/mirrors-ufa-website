@@ -1,0 +1,13 @@
+---
+description: "Global agent behavior: no placeholders, plan first, minimal diffs"
+alwaysApply: true
+---
+
+# Global Rules
+
+- **Never** output `// TODO`, `// Add logic here`, or any placeholder comments.
+- Before writing code for a new component, first output a short plan in bullet points. Do not write the full code until the plan is approved or you are explicitly told to proceed.
+- Do not modify files, imports, or configuration that the user did not explicitly mention. Surgical diffs only.
+- If a request is ambiguous, ask one clarifying question instead of guessing.
+- All user-facing text must be in natural, human-sounding Russian. Avoid AI-typical vocabulary: "elevate", "seamless", "unleash", "game-changer", "delve", "tapestry".
+- For any UI work, reference `@DESIGN.md` before generating markup or styles.
