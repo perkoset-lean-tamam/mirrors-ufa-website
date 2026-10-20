@@ -55,6 +55,35 @@ const {
       href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500&display=swap"
       rel="stylesheet"
     />
+
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'LocalBusiness',
+        name: 'Зеркала Уфы',
+        description:
+          'Изготовление и установка зеркал, душевых кабин, стеклянных перегородок на заказ в Уфе и Башкортостане.',
+        url: 'https://mirrors-ufa.ru',
+        telephone: '+79373398232',
+        image: 'https://mirrors-ufa.ru/og-image.jpg',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Уфа',
+          addressRegion: 'Республика Башкортостан',
+          addressCountry: 'RU',
+        },
+        areaServed: {
+          '@type': 'City',
+          name: 'Уфа',
+        },
+        priceRange: '500-50000 ₽',
+        founder: {
+          '@type': 'Person',
+          name: 'Олег Артемьев',
+        },
+      })}
+    />
   </head>
   <body class="bg-background font-body text-ink antialiased">
     <slot />
