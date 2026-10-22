@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mirrors-ufa.ru/sitemap-index.xml
+Sitemap: https://xn--80aanhqh6a2aj4e.xn--p1ai/sitemap-index.xml

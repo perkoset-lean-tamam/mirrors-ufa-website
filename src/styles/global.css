@@ -22,6 +22,34 @@
                        0 8px 20px -8px rgba(30, 27, 24, 0.08);
 
   /* Spacing */
-  --spacing-section: clamp(6rem, 12vw, 10rem);
+  --spacing-section: clamp(3.5rem, 7vw, 6rem);
   --spacing-gutter: clamp(1.5rem, 4vw, 3rem);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+main > section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 700ms ease-out, transform 700ms ease-out;
+}
+
+main > section#hero,
+main > section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  main > section {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
