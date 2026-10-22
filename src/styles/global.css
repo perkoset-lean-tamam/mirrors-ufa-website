@@ -22,7 +22,7 @@
                        0 8px 20px -8px rgba(30, 27, 24, 0.08);
 
   /* Spacing */
-  --spacing-section: clamp(6rem, 12vw, 10rem);
+  --spacing-section: clamp(3.5rem, 7vw, 6rem);
   --spacing-gutter: clamp(1.5rem, 4vw, 3rem);
 }
 

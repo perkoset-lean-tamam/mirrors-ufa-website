@@ -1,40 +1,27 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import { WHATSAPP_URL, PHONE_TEL, PHONE_DISPLAY, MAX_URL } from '../consts';
+import heroImage from '../assets/images/hero.webp';
 
-const works = [
-  { src: '/images/works/1.webp', alt: 'Пример работы — фото 1' },
-  { src: '/images/works/2.webp', alt: 'Пример работы — фото 2' },
-  { src: '/images/works/3.webp', alt: 'Пример работы — фото 3' },
-  { src: '/images/works/4.webp', alt: 'Пример работы — фото 4' },
-  { src: '/images/works/5.webp', alt: 'Пример работы — фото 5' },
-  { src: '/images/works/6.webp', alt: 'Пример работы — фото 6' },
-  { src: '/images/works/7.webp', alt: 'Пример работы — фото 7' },
-  { src: '/images/works/8.webp', alt: 'Пример работы — фото 8' },
-  { src: '/images/works/9.webp', alt: 'Пример работы — фото 9' },
-  { src: '/images/works/10.webp', alt: 'Пример работы — фото 10' },
-  { src: '/images/works/11.webp', alt: 'Пример работы — фото 11' },
-  { src: '/images/works/12.webp', alt: 'Пример работы — фото 12' },
-  { src: '/images/works/13.webp', alt: 'Пример работы — фото 13' },
-  { src: '/images/works/14.webp', alt: 'Пример работы — фото 14' },
-  { src: '/images/works/15.webp', alt: 'Пример работы — фото 15' },
-  { src: '/images/works/16.webp', alt: 'Пример работы — фото 16' },
-  { src: '/images/works/17.webp', alt: 'Пример работы — фото 17' },
-  { src: '/images/works/18.webp', alt: 'Пример работы — фото 18' },
-  { src: '/images/works/19.webp', alt: 'Пример работы — фото 19' },
-  { src: '/images/works/20.webp', alt: 'Пример работы — фото 20' },
-  { src: '/images/works/21.webp', alt: 'Пример работы — фото 21' },
-];
+const workModules = import.meta.glob<{ default: ImageMetadata }>(
+  '../assets/images/works/*.{webp,WEBP}',
+  { eager: true },
+);
 
-const galleryWidths = [
-  'w-[85vw] md:w-[55vw] lg:w-[560px]',
-  'w-[60vw] md:w-[35vw] lg:w-[360px]',
-  'w-[75vw] md:w-[45vw] lg:w-[460px]',
-  'w-[65vw] md:w-[40vw] lg:w-[400px]',
-  'w-[85vw] md:w-[55vw] lg:w-[560px]',
-  'w-[60vw] md:w-[35vw] lg:w-[360px]',
-];
+const works = Object.entries(workModules)
+  .sort(([a], [b]) => {
+    const num = (path: string) =>
+      Number(path.match(/(\d+)\.webp$/i)?.[1] ?? 0);
+    return num(a) - num(b);
+  })
+  .map(([path, mod], index) => ({
+    src: mod.default,
+    alt: `Пример работы — фото ${index + 1}`,
+    path,
+  }));
 
 const services = [
   { num: '01', title: 'Изготовление и установка зеркал' },
@@ -81,7 +68,7 @@ const faq = [
   <main id="top" class="pt-16 lg:pt-20">
     <section
       id="hero"
-      class="min-h-[100dvh] grid grid-cols-1 lg:grid-cols-12 items-center gap-10 lg:gap-16 px-gutter py-section"
+      class="min-h-[100dvh] grid grid-cols-1 lg:grid-cols-12 items-start gap-10 lg:gap-16 px-gutter pt-6 lg:pt-8 pb-section"
     >
       <div class="flex flex-col gap-6 lg:col-span-7">
         <p
@@ -132,12 +119,14 @@ const faq = [
         <div
           class="aspect-[4/5] lg:aspect-[3/4] rounded shadow-reflection overflow-hidden bg-surface"
         >
-          <img
-            src="/images/hero.webp"
+          <Image
+            src={heroImage}
             alt="Зеркало в латунной раме в светлом интерьере"
+            width={800}
+            height={1000}
             loading="eager"
-            decoding="async"
             fetchpriority="high"
+            format="avif"
             class="w-full h-full object-cover"
           />
         </div>
@@ -196,7 +185,7 @@ const faq = [
         </h2>
       </header>
 
-      <div class="mt-12 lg:mt-16 overflow-hidden min-w-0">
+      <div class="mt-8 lg:mt-12 overflow-hidden min-w-0">
         <ul
           id="gallery-track"
           class="min-w-0 flex gap-4 lg:gap-6 overflow-x-auto snap-x snap-mandatory scroll-px-gutter px-gutter pb-8 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-line/50 [&::-webkit-scrollbar-thumb]:bg-brass [&::-webkit-scrollbar-thumb]:rounded-full"
@@ -205,15 +194,22 @@ const faq = [
         >
           {
             works.map((work, index) => (
-              <li class={`group shrink-0 snap-start transition-[width] duration-500 ease-out ${galleryWidths[index % galleryWidths.length]}`}>
+              <li
+                class="group shrink-0 snap-start w-[85vw] md:w-[45vw] lg:w-[420px] transition-[transform,opacity] duration-[350ms] ease-out"
+                data-slide
+                data-index={index}
+              >
                 <figure>
                   <div class="aspect-[4/5] overflow-hidden rounded bg-surface transition-shadow duration-700 ease-out motion-safe:group-hover:shadow-[0_40px_80px_-25px_rgba(30,27,24,0.22),0_12px_28px_-10px_rgba(30,27,24,0.10)]">
-                    <img
+                    <Image
                       src={work.src}
                       alt={work.alt}
+                      width={800}
+                      height={1000}
                       loading="lazy"
                       decoding="async"
-                      class="w-full h-full object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.03]"
+                      format="avif"
+                      class="w-full h-full object-cover transition-transform duration-[1200ms] ease-out motion-safe:group-hover:scale-[1.06]"
                     />
                   </div>
                 </figure>
@@ -240,10 +236,17 @@ const faq = [
           Напишите или позвоните — обсудим размер, материал и сроки. Замер по
           Уфе бесплатный.
         </p>
+
+        <div class="mt-8 flex items-center gap-3">
+          <div>
+            <p class="font-body text-sm text-ink">Олег Артемьев</p>
+            <p class="font-body text-xs text-ink-muted">руководитель-исполнитель</p>
+          </div>
+        </div>
       </div>
 
       <div
-        class="mt-12 lg:mt-16 grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6"
+        class="mt-8 lg:mt-12 grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6"
       >
         <a
           href={WHATSAPP_URL}
@@ -310,7 +313,7 @@ const faq = [
         </a>
       </div>
 
-      <div class="mt-12 lg:mt-16 pt-8 border-t border-line">
+      <div class="mt-8 lg:mt-12 pt-8 border-t border-line">
         <p class="font-body text-xs uppercase tracking-[0.05em] text-ink-muted">
           Стоимость
         </p>
@@ -342,7 +345,7 @@ const faq = [
         </div>
       </div>
 
-      <div class="mt-12 lg:mt-16 pt-8 border-t border-line">
+      <div class="mt-8 lg:mt-12 pt-8 border-t border-line">
         <p class="font-body text-xs uppercase tracking-[0.05em] text-ink-muted">
           Оплата
         </p>
@@ -354,25 +357,6 @@ const faq = [
         </div>
       </div>
 
-      <div class="mt-12 lg:mt-16 pt-8 border-t border-line">
-        <div
-          class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6"
-        >
-          <div>
-            <p class="font-body text-sm text-ink-muted">Контактное лицо</p>
-            <p class="mt-2 font-body text-xl lg:text-2xl text-ink">
-              Олег Артемьев
-            </p>
-            <p class="mt-1 font-body text-sm text-ink-muted">
-              руководитель-исполнитель
-            </p>
-          </div>
-          <div class="font-body text-sm text-ink-muted">
-            <p>Уфа, Уфимский район</p>
-            <p class="mt-1">Работаем по Уфе и Уфимскому району</p>
-          </div>
-        </div>
-      </div>
     </section>
 
     <section id="faq" class="py-section px-gutter bg-background">
@@ -403,7 +387,7 @@ const faq = [
     </section>
   </main>
 
-  <footer class="mt-section border-t border-line bg-background">
+  <footer class="border-t border-line bg-background">
     <div class="px-gutter py-12 lg:py-16">
       <div
         class="flex flex-col gap-8 text-left lg:grid lg:grid-cols-12 lg:gap-8"
@@ -466,10 +450,14 @@ const faq = [
   </footer>
 
   <script>
+    let isAutoScrolling = false;
     const track = document.getElementById('gallery-track');
     if (track) {
       let isScrolling: number | undefined;
+
       track.addEventListener('scroll', () => {
+        if (isAutoScrolling) return;
+
         window.clearTimeout(isScrolling);
         isScrolling = window.setTimeout(() => {
           const slides = Array.from(track.querySelectorAll('li')) as HTMLElement[];
@@ -484,9 +472,20 @@ const faq = [
               closestIndex = index;
             }
           });
+
           const target = slides[closestIndex];
-          track.scrollTo({ left: target.offsetLeft - track.offsetLeft, behavior: 'smooth' });
-        }, 150);
+          const targetScrollLeft = target.offsetLeft - track.offsetLeft;
+          const currentScrollLeft = track.scrollLeft;
+
+          if (Math.abs(targetScrollLeft - currentScrollLeft) < 2) return;
+
+          isAutoScrolling = true;
+          track.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
+
+          setTimeout(() => {
+            isAutoScrolling = false;
+          }, 500);
+        }, 200);
       });
     }
 
@@ -505,5 +504,73 @@ const faq = [
       );
       sections.forEach((s) => observer.observe(s));
     }
+
+    // Фокусная лента: scale/opacity в зависимости от расстояния до центра
+    const initGalleryFocus = () => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      const track = document.getElementById('gallery-track');
+      if (!track) return;
+
+      const slides = Array.from(track.querySelectorAll('[data-slide]')) as HTMLElement[];
+      if (slides.length === 0) return;
+
+      const update = () => {
+        const trackRect = track.getBoundingClientRect();
+        const trackCenter = trackRect.left + trackRect.width / 2;
+
+        let focusedIndex = 0;
+        let closest = Infinity;
+        slides.forEach((slide, index) => {
+          const rect = slide.getBoundingClientRect();
+          const slideCenter = rect.left + rect.width / 2;
+          const distance = Math.abs(slideCenter - trackCenter);
+          if (distance < closest) {
+            closest = distance;
+            focusedIndex = index;
+          }
+        });
+
+        slides.forEach((slide, index) => {
+          const dist = Math.abs(index - focusedIndex);
+          const isNeighbor = dist === 1;
+          const isFar = dist >= 2;
+
+          slide.style.transform = isFar
+            ? 'scale(0.94)'
+            : isNeighbor
+              ? 'scale(0.97)'
+              : 'scale(1)';
+          slide.style.opacity = isFar ? '0.75' : isNeighbor ? '0.9' : '1';
+
+          const inner = slide.querySelector('figure > div') as HTMLElement | null;
+          if (!inner) return;
+
+          if (isNeighbor) {
+            inner.style.filter = 'blur(6px) grayscale(0.35)';
+          } else {
+            inner.style.filter = 'none';
+          }
+        });
+      };
+
+      let ticking = false;
+      const onScroll = () => {
+        if (isAutoScrolling) return;
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            update();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      };
+
+      track.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', update);
+      update();
+    };
+
+    initGalleryFocus();
   </script>
 </BaseLayout>
