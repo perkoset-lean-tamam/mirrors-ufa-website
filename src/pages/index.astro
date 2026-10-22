@@ -64,7 +64,7 @@ const faq = [
   <main id="top" class="pt-16 lg:pt-20">
     <section
       id="hero"
-      class="min-h-[100dvh] grid grid-cols-1 lg:grid-cols-12 items-start gap-10 lg:gap-16 px-gutter pt-6 lg:pt-8 pb-section"
+      class="lg:min-h-[100dvh] grid grid-cols-1 lg:grid-cols-12 items-start gap-10 lg:gap-16 px-gutter pt-6 lg:pt-8 pb-section"
     >
       <div class="flex flex-col gap-6 lg:col-span-7">
         <p
@@ -111,7 +111,7 @@ const faq = [
         </div>
       </div>
 
-      <div class="lg:col-span-5">
+      <div class="hidden lg:block lg:col-span-5">
         <div
           class="aspect-[4/5] lg:aspect-[3/4] rounded shadow-reflection overflow-hidden bg-surface"
         >
@@ -196,18 +196,26 @@ const faq = [
                 data-index={index}
               >
                 <figure>
-                  <div class="aspect-[4/5] overflow-hidden rounded bg-surface transition-shadow duration-700 ease-out motion-safe:group-hover:shadow-[0_40px_80px_-25px_rgba(30,27,24,0.22),0_12px_28px_-10px_rgba(30,27,24,0.10)]">
-                    <Image
-                      src={work.src}
-                      alt={work.alt}
-                      width={800}
-                      height={1000}
-                      loading="lazy"
-                      decoding="async"
-                      format="avif"
-                      class="w-full h-full object-cover transition-transform duration-[1200ms] ease-out motion-safe:group-hover:scale-[1.06]"
-                    />
-                  </div>
+                  <button
+                    type="button"
+                    data-lightbox-open
+                    data-index={index}
+                    aria-label={`Открыть фото ${index + 1}`}
+                    class="block w-full cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                  >
+                    <div class="aspect-[4/5] overflow-hidden rounded bg-surface transition-shadow duration-700 ease-out motion-safe:group-hover:shadow-[0_40px_80px_-25px_rgba(30,27,24,0.22),0_12px_28px_-10px_rgba(30,27,24,0.10)]">
+                      <Image
+                        src={work.src}
+                        alt={work.alt}
+                        width={800}
+                        height={1000}
+                        loading="lazy"
+                        decoding="async"
+                        format="avif"
+                        class="w-full h-full object-cover transition-transform duration-[1200ms] ease-out motion-safe:group-hover:scale-[1.06]"
+                      />
+                    </div>
+                  </button>
                 </figure>
               </li>
             ))
@@ -447,6 +455,66 @@ const faq = [
     <Icon name="lucide:arrow-up" class="w-5 h-5" aria-hidden="true" />
   </a>
 
+  <dialog
+    id="lightbox"
+    aria-label="Просмотр фото"
+    class="lightbox fixed inset-0 m-0 max-h-none max-w-none w-full h-full bg-transparent p-0 open:flex items-center justify-center"
+  >
+    <div
+      id="lightbox-stage"
+      class="relative z-10 flex max-h-[90vh] max-w-[90vw] items-center justify-center touch-pan-y"
+    >
+      <img
+        id="lightbox-image"
+        alt=""
+        class="max-h-[90vh] max-w-[90vw] object-contain shadow-reflection select-none"
+        draggable="false"
+      />
+    </div>
+    <button
+      type="button"
+      id="lightbox-close"
+      aria-label="Закрыть"
+      class="absolute top-4 right-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-brass text-surface cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-ink"
+    >
+      <Icon name="lucide:x" class="w-5 h-5" aria-hidden="true" />
+    </button>
+    <button
+      type="button"
+      id="lightbox-prev"
+      aria-label="Предыдущее фото"
+      class="absolute left-4 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-brass text-surface cursor-pointer lg:flex focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-ink disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
+    >
+      <Icon name="lucide:chevron-left" class="w-5 h-5" aria-hidden="true" />
+    </button>
+    <button
+      type="button"
+      id="lightbox-next"
+      aria-label="Следующее фото"
+      class="absolute right-4 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-brass text-surface cursor-pointer lg:flex focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-ink disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none"
+    >
+      <Icon name="lucide:chevron-right" class="w-5 h-5" aria-hidden="true" />
+    </button>
+  </dialog>
+
+  <style>
+    .lightbox::backdrop {
+      background: rgba(30, 27, 24, 0.88);
+    }
+    .lightbox {
+      opacity: 0;
+      transition: opacity 400ms ease-out;
+    }
+    .lightbox[open] {
+      opacity: 1;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .lightbox {
+        transition: none;
+      }
+    }
+  </style>
+
   <script>
     let isAutoScrolling = false;
 
@@ -542,6 +610,10 @@ const faq = [
           }
         });
 
+        if (track.scrollLeft < 8) {
+          focusedIndex = 0;
+        }
+
         slides.forEach((slide, index) => {
           const dist = Math.abs(index - focusedIndex);
           const isNeighbor = dist === 1;
@@ -554,7 +626,7 @@ const faq = [
               : 'scale(1)';
           slide.style.opacity = isFar ? '0.75' : isNeighbor ? '0.9' : '1';
 
-          const inner = slide.querySelector('figure > div') as HTMLElement | null;
+          const inner = slide.querySelector('figure div') as HTMLElement | null;
           if (!inner) return;
 
           if (isNeighbor) {
@@ -583,5 +655,125 @@ const faq = [
     };
 
     initGalleryFocus();
+
+    const initLightbox = () => {
+      const dialog = document.getElementById('lightbox') as HTMLDialogElement | null;
+      const image = document.getElementById('lightbox-image') as HTMLImageElement | null;
+      const closeBtn = document.getElementById('lightbox-close');
+      const prevBtn = document.getElementById('lightbox-prev');
+      const nextBtn = document.getElementById('lightbox-next');
+      const gallery = document.getElementById('gallery-track');
+      if (!dialog || !image || !gallery) return;
+
+      const getSlides = () =>
+        Array.from(gallery.querySelectorAll('[data-lightbox-open]')) as HTMLElement[];
+
+      let currentIndex = 0;
+
+      const updateNavButtons = (total: number) => {
+        if (prevBtn instanceof HTMLButtonElement) {
+          prevBtn.disabled = currentIndex <= 0;
+        }
+        if (nextBtn instanceof HTMLButtonElement) {
+          nextBtn.disabled = currentIndex >= total - 1;
+        }
+      };
+
+      const showAt = (index: number) => {
+        const slides = getSlides();
+        if (slides.length === 0) return;
+        currentIndex = Math.max(0, Math.min(index, slides.length - 1));
+        const trigger = slides[currentIndex];
+        const thumb = trigger.querySelector('img') as HTMLImageElement | null;
+        if (!thumb) return;
+        image.src = thumb.currentSrc || thumb.src;
+        image.srcset = thumb.srcset || '';
+        image.sizes = '90vw';
+        image.alt = thumb.alt || '';
+        updateNavButtons(slides.length);
+      };
+
+      const open = (index: number) => {
+        showAt(index);
+        dialog.showModal();
+        document.body.style.overflow = 'hidden';
+        closeBtn?.focus();
+      };
+
+      const close = () => {
+        if (!dialog.open) return;
+        dialog.close();
+      };
+
+      dialog.addEventListener('close', () => {
+        document.body.style.overflow = '';
+        image.removeAttribute('src');
+        image.removeAttribute('srcset');
+      });
+
+      gallery.addEventListener('click', (event) => {
+        const target = event.target as HTMLElement | null;
+        const trigger = target?.closest('[data-lightbox-open]') as HTMLElement | null;
+        if (!trigger || !gallery.contains(trigger)) return;
+        const index = Number(trigger.dataset.index ?? '0');
+        open(Number.isFinite(index) ? index : 0);
+      });
+
+      closeBtn?.addEventListener('click', close);
+      prevBtn?.addEventListener('click', () => showAt(currentIndex - 1));
+      nextBtn?.addEventListener('click', () => showAt(currentIndex + 1));
+
+      dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) close();
+      });
+
+      dialog.addEventListener('keydown', (event) => {
+        if (!dialog.open) return;
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          showAt(currentIndex - 1);
+        } else if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          showAt(currentIndex + 1);
+        }
+      });
+
+      const stage = document.getElementById('lightbox-stage');
+      if (stage) {
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        stage.addEventListener(
+          'touchstart',
+          (event) => {
+            const touch = event.changedTouches[0];
+            if (!touch) return;
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+          },
+          { passive: true },
+        );
+
+        stage.addEventListener(
+          'touchend',
+          (event) => {
+            const touch = event.changedTouches[0];
+            if (!touch) return;
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
+            if (Math.abs(deltaX) < 50) return;
+            if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
+            if (deltaX < 0) {
+              showAt(currentIndex + 1);
+            } else {
+              showAt(currentIndex - 1);
+            }
+          },
+          { passive: true },
+        );
+      }
+    };
+
+    initLightbox();
   </script>
 </BaseLayout>
