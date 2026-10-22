@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { WHATSAPP_URL } from '../consts';
 
 export interface Props {
   title: string;
@@ -8,7 +9,7 @@ export interface Props {
 
 const {
   title,
-  description = 'Зеркала на заказ в Уфе — изготовление и установка зеркал, душевых кабин, стеклянных перегородок. Замер 500 ₽, доставка 600 ₽. Работаем по Уфе и Башкортостану.',
+  description = 'Зеркала на заказ в Уфе — изготовление и установка зеркал, душевых кабин, стеклянных перегородок. Замер 500 ₽, доставка 600 ₽. Работаем по Уфе и районам города.',
 } = Astro.props;
 ---
 
@@ -22,6 +23,7 @@ const {
     <meta name="description" content={description} />
 
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <link rel="alternate" hreflang="ru" href={new URL(Astro.url.pathname, Astro.site)} />
 
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
@@ -65,7 +67,7 @@ const {
         '@type': 'LocalBusiness',
         name: 'Зеркала Уфы',
         description:
-          'Изготовление и установка зеркал, душевых кабин, стеклянных перегородок на заказ в Уфе и Башкортостане.',
+          'Изготовление и установка зеркал, душевых кабин, стеклянных перегородок на заказ в Уфе и районах.',
         url: 'https://mirrors-ufa.ru',
         telephone: '+79373398232',
         image: 'https://mirrors-ufa.ru/og-image.jpg',
@@ -75,10 +77,10 @@ const {
           addressRegion: 'Республика Башкортостан',
           addressCountry: 'RU',
         },
-        areaServed: {
-          '@type': 'City',
-          name: 'Уфа',
-        },
+        areaServed: [
+          { '@type': 'City', name: 'Уфа' },
+          { '@type': 'AdministrativeArea', name: 'Уфимский район' },
+        ],
         priceRange: '500-50000 ₽',
         founder: {
           '@type': 'Person',
@@ -88,6 +90,22 @@ const {
     />
   </head>
   <body class="bg-background font-body text-ink antialiased">
+    <header class="sticky top-0 z-50 bg-background/85 backdrop-blur-md border-b border-line">
+      <div class="px-gutter h-16 lg:h-20 flex items-center justify-between gap-6">
+        <a href="/" class="font-display text-xl lg:text-2xl tracking-[-0.01em] text-ink">
+          Зеркала Уфы
+        </a>
+        <nav class="hidden md:flex items-center gap-8" aria-label="Основная навигация">
+          <a href="#services" class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300">Услуги</a>
+          <a href="#gallery" class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300">Работы</a>
+          <a href="#contacts" class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300">Контакты</a>
+          <a href="#faq" class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300">Вопросы</a>
+        </nav>
+        <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" class="hidden md:inline-flex items-center gap-2 bg-brass text-surface rounded-sm px-5 py-2 min-h-[44px] font-body text-sm transition-transform duration-300 motion-safe:hover:translate-y-[-1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2">
+          Написать
+        </a>
+      </div>
+    </header>
     <slot />
   </body>
 </html>

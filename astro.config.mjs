@@ -8,7 +8,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://mirrors-ufa.ru', // TODO: заменить на реальный домен
+  site: 'https://xn--80aanhqh6a2aj4e.xn--p1ai',
   integrations: [icon(), sitemap()],
   vite: {
     plugins: [tailwindcss()]

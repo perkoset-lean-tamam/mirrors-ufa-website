@@ -1,17 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { Icon } from 'astro-icon/components';
-
-// WhatsApp для заявок
-const WHATSAPP_URL =
-  'https://wa.me/79177825102?text=Здравствуйте!%20Интересует%20зеркало%20на%20заказ';
-
-// Телефон для звонков
-const PHONE_TEL = 'tel:+79373398232';
-const PHONE_DISPLAY = '+7 937 339 8232';
-
-// MAX
-const MAX_URL = 'https://web.max.ru/63876228';
+import { WHATSAPP_URL, PHONE_TEL, PHONE_DISPLAY, MAX_URL } from '../consts';
 
 const works = [
   { src: '/images/works/1.webp', alt: 'Пример работы — фото 1' },
@@ -37,6 +27,15 @@ const works = [
   { src: '/images/works/21.webp', alt: 'Пример работы — фото 21' },
 ];
 
+const galleryWidths = [
+  'w-[85vw] md:w-[55vw] lg:w-[560px]',
+  'w-[60vw] md:w-[35vw] lg:w-[360px]',
+  'w-[75vw] md:w-[45vw] lg:w-[460px]',
+  'w-[65vw] md:w-[40vw] lg:w-[400px]',
+  'w-[85vw] md:w-[55vw] lg:w-[560px]',
+  'w-[60vw] md:w-[35vw] lg:w-[360px]',
+];
+
 const services = [
   { num: '01', title: 'Изготовление и установка зеркал' },
   { num: '02', title: 'Зеркала с подсветкой и подогревом' },
@@ -49,11 +48,39 @@ const services = [
 ];
 
 const currentYear = new Date().getFullYear();
+
+const faq = [
+  {
+    q: 'Сколько ждать заказ?',
+    a: 'Точный срок называем после замера — зависит от размера, материала и загрузки. До этого ориентиры по телефону или в мессенджере.',
+  },
+  {
+    q: 'Что нужно для расчёта?',
+    a: 'Опишите задачу: помещение, примерные ширина и высота, нужна ли подсветка или особая обработка. Этого достаточно для первого ответа.',
+  },
+  {
+    q: 'Сколько стоит выезд замерщика?',
+    a: '500 ₽ в черте города. За пределы Уфы (Дёма, Затон и другие районы) — по договорённости.',
+  },
+  {
+    q: 'Входит ли монтаж в цену изделия?',
+    a: 'Нет. Установка считается отдельно — от сложности крепления и объекта. Доставка по городу — 600 ₽.',
+  },
+  {
+    q: 'Где вы работаете?',
+    a: 'По Уфе и Уфимскому району. Заявки из области принимаем — условия выезда и доставки обсуждаем индивидуально.',
+  },
+  {
+    q: 'Как оплатить?',
+    a: 'Наличными или переводом. Предоплата возможна — условия согласуем при заказе.',
+  },
+];
 ---
 
 <BaseLayout title="Зеркала Уфы — изготовление и установка зеркал на заказ">
-  <main id="top">
+  <main id="top" class="pt-16 lg:pt-20">
     <section
+      id="hero"
       class="min-h-[100dvh] grid grid-cols-1 lg:grid-cols-12 items-center gap-10 lg:gap-16 px-gutter py-section"
     >
       <div class="flex flex-col gap-6 lg:col-span-7">
@@ -73,8 +100,8 @@ const currentYear = new Date().getFullYear();
           class="font-body text-lg md:text-xl text-ink-muted max-w-[42ch] leading-[1.55]"
         >
           Изготовление и установка зеркал, душевых кабин, стеклянных
-          перегородок. Индивидуальные размеры, выезд замерщика по городу и
-          области.
+          перегородок. Индивидуальные размеры, выезд замерщика по Уфе и
+          районам.
         </p>
 
         <div class="flex flex-col gap-4 items-start">
@@ -134,7 +161,7 @@ const currentYear = new Date().getFullYear();
             class="mt-6 font-body text-surface/80 leading-[1.55] max-w-[36ch]"
           >
             Изготавливаем по вашим размерам и устанавливаем. Замер, доставка и
-            монтаж по Уфе и области.
+            монтаж по Уфе и районам.
           </p>
         </div>
 
@@ -171,21 +198,22 @@ const currentYear = new Date().getFullYear();
 
       <div class="mt-12 lg:mt-16 overflow-hidden min-w-0">
         <ul
-          class="min-w-0 flex gap-4 lg:gap-6 overflow-x-auto snap-x snap-proximity scroll-px-gutter px-gutter pb-8 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-line/50 [&::-webkit-scrollbar-thumb]:bg-brass [&::-webkit-scrollbar-thumb]:rounded-full"
+          id="gallery-track"
+          class="min-w-0 flex gap-4 lg:gap-6 overflow-x-auto snap-x snap-mandatory scroll-px-gutter px-gutter pb-8 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-line/50 [&::-webkit-scrollbar-thumb]:bg-brass [&::-webkit-scrollbar-thumb]:rounded-full"
           tabindex="0"
           aria-label="Галерея работ — прокрутите горизонтально"
         >
           {
-            works.map((work) => (
-              <li class="shrink-0 w-[80vw] md:w-[45vw] lg:w-[500px] snap-start">
+            works.map((work, index) => (
+              <li class={`group shrink-0 snap-start transition-[width] duration-500 ease-out ${galleryWidths[index % galleryWidths.length]}`}>
                 <figure>
-                  <div class="aspect-[4/5] overflow-hidden rounded bg-surface">
+                  <div class="aspect-[4/5] overflow-hidden rounded bg-surface transition-shadow duration-700 ease-out motion-safe:group-hover:shadow-[0_40px_80px_-25px_rgba(30,27,24,0.22),0_12px_28px_-10px_rgba(30,27,24,0.10)]">
                     <img
                       src={work.src}
                       alt={work.alt}
                       loading="lazy"
                       decoding="async"
-                      class="w-full h-full object-cover transition-transform duration-700 ease-out motion-safe:hover:scale-[1.015]"
+                      class="w-full h-full object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.03]"
                     />
                   </div>
                 </figure>
@@ -346,6 +374,33 @@ const currentYear = new Date().getFullYear();
         </div>
       </div>
     </section>
+
+    <section id="faq" class="py-section px-gutter bg-background">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+        <div class="lg:col-span-4">
+          <p class="font-body text-xs uppercase tracking-[0.05em] text-ink-muted">
+            Вопросы
+          </p>
+          <h2 class="mt-3 font-display text-[clamp(2rem,4vw,3.25rem)] leading-[1.1] tracking-[-0.01em] text-ink max-w-[12ch]">
+            Частые вопросы
+          </h2>
+        </div>
+        <div class="lg:col-span-8 border-t border-line">
+          {
+            faq.map((item) => (
+              <div class="py-8 lg:py-10 border-b border-line">
+                <h3 class="font-display text-xl lg:text-2xl leading-[1.2] tracking-[-0.01em] text-ink">
+                  {item.q}
+                </h3>
+                <p class="mt-3 font-body text-base text-ink-muted leading-[1.6] max-w-[60ch]">
+                  {item.a}
+                </p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="mt-section border-t border-line bg-background">
@@ -409,4 +464,46 @@ const currentYear = new Date().getFullYear();
       </div>
     </div>
   </footer>
+
+  <script>
+    const track = document.getElementById('gallery-track');
+    if (track) {
+      let isScrolling: number | undefined;
+      track.addEventListener('scroll', () => {
+        window.clearTimeout(isScrolling);
+        isScrolling = window.setTimeout(() => {
+          const slides = Array.from(track.querySelectorAll('li')) as HTMLElement[];
+          if (slides.length === 0) return;
+          const trackLeft = track.getBoundingClientRect().left;
+          let closestIndex = 0;
+          let closestDistance = Infinity;
+          slides.forEach((slide, index) => {
+            const distance = Math.abs(slide.getBoundingClientRect().left - trackLeft);
+            if (distance < closestDistance) {
+              closestDistance = distance;
+              closestIndex = index;
+            }
+          });
+          const target = slides[closestIndex];
+          track.scrollTo({ left: target.offsetLeft - track.offsetLeft, behavior: 'smooth' });
+        }, 150);
+      });
+    }
+
+    if ('IntersectionObserver' in window) {
+      const sections = document.querySelectorAll('main > section:not(#hero)');
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { threshold: 0.1, rootMargin: '0px 0px -10% 0px' }
+      );
+      sections.forEach((s) => observer.observe(s));
+    }
+  </script>
 </BaseLayout>
