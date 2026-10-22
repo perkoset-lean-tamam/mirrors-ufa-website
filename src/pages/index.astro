@@ -50,10 +50,6 @@ const faq = [
     a: '500 ₽ в черте города. За пределы Уфы (Дёма, Затон и другие районы) — по договорённости.',
   },
   {
-    q: 'Входит ли монтаж в цену изделия?',
-    a: 'Нет. Установка считается отдельно — от сложности крепления и объекта. Доставка по городу — 600 ₽.',
-  },
-  {
     q: 'Где вы работаете?',
     a: 'По Уфе и Уфимскому району. Заявки из области принимаем — условия выезда и доставки обсуждаем индивидуально.',
   },
@@ -418,12 +414,6 @@ const faq = [
           >
             Контакты
           </a>
-          <a
-            href="#top"
-            class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300"
-          >
-            Наверх
-          </a>
         </nav>
 
         <div class="lg:col-span-3 lg:text-right">
@@ -448,8 +438,30 @@ const faq = [
     </div>
   </footer>
 
+  <a
+    id="scroll-top"
+    href="#top"
+    aria-label="Наверх"
+    class="fixed bottom-6 right-6 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-brass text-surface shadow-reflection opacity-0 invisible pointer-events-none transition-[opacity,visibility,transform] duration-[400ms] ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-safe:hover:translate-y-[-2px] data-[visible]:opacity-100 data-[visible]:visible data-[visible]:pointer-events-auto"
+  >
+    <Icon name="lucide:arrow-up" class="w-5 h-5" aria-hidden="true" />
+  </a>
+
   <script>
     let isAutoScrolling = false;
+
+    const scrollTopBtn = document.getElementById('scroll-top');
+    if (scrollTopBtn) {
+      const toggleScrollTop = () => {
+        if (window.scrollY > 300) {
+          scrollTopBtn.setAttribute('data-visible', '');
+        } else {
+          scrollTopBtn.removeAttribute('data-visible');
+        }
+      };
+      toggleScrollTop();
+      window.addEventListener('scroll', toggleScrollTop, { passive: true });
+    }
     const track = document.getElementById('gallery-track');
     if (track) {
       let isScrolling: number | undefined;
