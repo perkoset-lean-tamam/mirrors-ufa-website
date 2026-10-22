@@ -181,17 +181,18 @@ const faq = [
         </h2>
       </header>
 
-      <div class="mt-8 lg:mt-12 overflow-hidden min-w-0">
+      <div class="mt-8 lg:mt-12 relative min-w-0">
         <ul
           id="gallery-track"
-          class="min-w-0 flex gap-4 lg:gap-6 overflow-x-auto snap-x snap-mandatory scroll-px-gutter px-gutter pb-8 [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-track]:bg-line/50 [&::-webkit-scrollbar-thumb]:bg-brass [&::-webkit-scrollbar-thumb]:rounded-full"
+          class="min-w-0 flex gap-4 lg:gap-6 overflow-x-auto snap-x snap-mandatory scroll-px-gutter px-gutter pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          style="scrollbar-width: none; -ms-overflow-style: none;"
           tabindex="0"
-          aria-label="Галерея работ — прокрутите горизонтально"
+          aria-label="Галерея работ"
         >
           {
             works.map((work, index) => (
               <li
-                class="group shrink-0 snap-start w-[85vw] md:w-[45vw] lg:w-[420px] transition-[transform,opacity] duration-[350ms] ease-out"
+                class="group shrink-0 snap-start w-[85vw] md:w-[45vw] lg:w-[420px] transition-opacity duration-[350ms] ease-out"
                 data-slide
                 data-index={index}
               >
@@ -221,6 +222,29 @@ const faq = [
             ))
           }
         </ul>
+
+        <div class="mt-6 flex items-center gap-2 px-gutter">
+          <button
+            type="button"
+            id="gallery-prev"
+            aria-controls="gallery-track"
+            aria-label="Предыдущее фото"
+            class="group/nav inline-flex items-center gap-2 border border-line rounded-sm pl-3 pr-4 py-2.5 min-h-[44px] font-body text-xs uppercase tracking-[0.05em] text-ink transition-[color,border-color,background-color,transform] duration-[400ms] ease-out hover:border-brass hover:text-brass hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:border-line disabled:hover:text-ink disabled:hover:bg-transparent motion-safe:hover:translate-y-[-1px] motion-safe:disabled:hover:translate-y-0"
+          >
+            <Icon name="lucide:chevron-left" class="w-4 h-4 shrink-0 transition-transform duration-[400ms] ease-out motion-safe:group-hover/nav:-translate-x-0.5" aria-hidden="true" />
+            Назад
+          </button>
+          <button
+            type="button"
+            id="gallery-next"
+            aria-controls="gallery-track"
+            aria-label="Следующее фото"
+            class="group/nav inline-flex items-center gap-2 border border-line rounded-sm pl-4 pr-3 py-2.5 min-h-[44px] font-body text-xs uppercase tracking-[0.05em] text-ink transition-[color,border-color,background-color,transform] duration-[400ms] ease-out hover:border-brass hover:text-brass hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:border-line disabled:hover:text-ink disabled:hover:bg-transparent motion-safe:hover:translate-y-[-1px] motion-safe:disabled:hover:translate-y-0"
+          >
+            Вперёд
+            <Icon name="lucide:chevron-right" class="w-4 h-4 shrink-0 transition-transform duration-[400ms] ease-out motion-safe:group-hover/nav:translate-x-0.5" aria-hidden="true" />
+          </button>
+        </div>
       </div>
     </section>
 
@@ -516,8 +540,6 @@ const faq = [
   </style>
 
   <script>
-    let isAutoScrolling = false;
-
     const scrollTopBtn = document.getElementById('scroll-top');
     if (scrollTopBtn) {
       const toggleScrollTop = () => {
@@ -529,43 +551,6 @@ const faq = [
       };
       toggleScrollTop();
       window.addEventListener('scroll', toggleScrollTop, { passive: true });
-    }
-    const track = document.getElementById('gallery-track');
-    if (track) {
-      let isScrolling: number | undefined;
-
-      track.addEventListener('scroll', () => {
-        if (isAutoScrolling) return;
-
-        window.clearTimeout(isScrolling);
-        isScrolling = window.setTimeout(() => {
-          const slides = Array.from(track.querySelectorAll('li')) as HTMLElement[];
-          if (slides.length === 0) return;
-          const trackLeft = track.getBoundingClientRect().left;
-          let closestIndex = 0;
-          let closestDistance = Infinity;
-          slides.forEach((slide, index) => {
-            const distance = Math.abs(slide.getBoundingClientRect().left - trackLeft);
-            if (distance < closestDistance) {
-              closestDistance = distance;
-              closestIndex = index;
-            }
-          });
-
-          const target = slides[closestIndex];
-          const targetScrollLeft = target.offsetLeft - track.offsetLeft;
-          const currentScrollLeft = track.scrollLeft;
-
-          if (Math.abs(targetScrollLeft - currentScrollLeft) < 2) return;
-
-          isAutoScrolling = true;
-          track.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
-
-          setTimeout(() => {
-            isAutoScrolling = false;
-          }, 500);
-        }, 200);
-      });
     }
 
     if ('IntersectionObserver' in window) {
@@ -584,77 +569,115 @@ const faq = [
       sections.forEach((s) => observer.observe(s));
     }
 
-    // Фокусная лента: scale/opacity в зависимости от расстояния до центра
-    const initGalleryFocus = () => {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
+    const initGallery = () => {
       const track = document.getElementById('gallery-track');
+      const prevBtn = document.getElementById('gallery-prev');
+      const nextBtn = document.getElementById('gallery-next');
       if (!track) return;
 
-      const slides = Array.from(track.querySelectorAll('[data-slide]')) as HTMLElement[];
-      if (slides.length === 0) return;
+      const getSlides = () =>
+        Array.from(track.querySelectorAll('[data-slide]')) as HTMLElement[];
 
-      const update = () => {
+      let currentIndex = 0;
+      let isAutoScrolling = false;
+      const reduceMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)',
+      ).matches;
+
+      const updateFocus = (index: number) => {
+        const list = getSlides();
+        list.forEach((slide, i) => {
+          slide.style.opacity = i === index ? '1' : '0.55';
+          slide.style.transform = '';
+          const inner = slide.querySelector('figure div') as HTMLElement | null;
+          if (inner) inner.style.filter = 'none';
+        });
+        if (prevBtn instanceof HTMLButtonElement) {
+          prevBtn.disabled = index <= 0;
+        }
+        if (nextBtn instanceof HTMLButtonElement) {
+          nextBtn.disabled = index >= list.length - 1;
+        }
+      };
+
+      const indexFromScroll = () => {
+        const list = getSlides();
+        if (list.length === 0) return 0;
+        if (track.scrollLeft < 8) return 0;
+
         const trackRect = track.getBoundingClientRect();
         const trackCenter = trackRect.left + trackRect.width / 2;
-
-        let focusedIndex = 0;
+        let best = 0;
         let closest = Infinity;
-        slides.forEach((slide, index) => {
+        list.forEach((slide, i) => {
           const rect = slide.getBoundingClientRect();
           const slideCenter = rect.left + rect.width / 2;
           const distance = Math.abs(slideCenter - trackCenter);
           if (distance < closest) {
             closest = distance;
-            focusedIndex = index;
+            best = i;
           }
         });
-
-        if (track.scrollLeft < 8) {
-          focusedIndex = 0;
-        }
-
-        slides.forEach((slide, index) => {
-          const dist = Math.abs(index - focusedIndex);
-          const isNeighbor = dist === 1;
-          const isFar = dist >= 2;
-
-          slide.style.transform = isFar
-            ? 'scale(0.94)'
-            : isNeighbor
-              ? 'scale(0.97)'
-              : 'scale(1)';
-          slide.style.opacity = isFar ? '0.75' : isNeighbor ? '0.9' : '1';
-
-          const inner = slide.querySelector('figure div') as HTMLElement | null;
-          if (!inner) return;
-
-          if (isNeighbor) {
-            inner.style.filter = 'blur(6px) grayscale(0.35)';
-          } else {
-            inner.style.filter = 'none';
-          }
-        });
+        return best;
       };
+
+      const goTo = (index: number) => {
+        const list = getSlides();
+        if (list.length === 0) return;
+        currentIndex = Math.max(0, Math.min(index, list.length - 1));
+        const target = list[currentIndex];
+        const left = target.offsetLeft - track.offsetLeft;
+        isAutoScrolling = true;
+        track.scrollTo({
+          left,
+          behavior: reduceMotion ? 'auto' : 'smooth',
+        });
+        updateFocus(currentIndex);
+        window.setTimeout(
+          () => {
+            isAutoScrolling = false;
+          },
+          reduceMotion ? 0 : 500,
+        );
+      };
+
+      prevBtn?.addEventListener('click', () => goTo(currentIndex - 1));
+      nextBtn?.addEventListener('click', () => goTo(currentIndex + 1));
 
       let ticking = false;
-      const onScroll = () => {
-        if (isAutoScrolling) return;
-        if (!ticking) {
-          window.requestAnimationFrame(() => {
-            update();
-            ticking = false;
-          });
-          ticking = true;
-        }
-      };
+      let snapTimer: number | undefined;
+      track.addEventListener(
+        'scroll',
+        () => {
+          if (!ticking) {
+            window.requestAnimationFrame(() => {
+              if (!isAutoScrolling) {
+                currentIndex = indexFromScroll();
+                updateFocus(currentIndex);
+              }
+              ticking = false;
+            });
+            ticking = true;
+          }
 
-      track.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', update);
-      update();
+          if (isAutoScrolling) return;
+          window.clearTimeout(snapTimer);
+          snapTimer = window.setTimeout(() => {
+            goTo(indexFromScroll());
+          }, 200);
+        },
+        { passive: true },
+      );
+
+      window.addEventListener('resize', () => {
+        currentIndex = indexFromScroll();
+        updateFocus(currentIndex);
+      });
+
+      updateFocus(0);
     };
 
-    initGalleryFocus();
+    initGallery();
 
     const initLightbox = () => {
       const dialog = document.getElementById('lightbox') as HTMLDialogElement | null;
