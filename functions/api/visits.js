@@ -1,93 +1,91 @@
-const COUNTER_API_BASE = 'https://api.counterapi.dev/v2';
-const DEFAULT_WORKSPACE = 'codeine-castledecoygrenadegangs-team-6021';
-const DEFAULT_NAME = 'first-counter-6021';
+const UPSTREAM =
+  'https://api.counterapi.dev/v2/codeine-castledecoygrenadegangs-team-6021/first-counter-6021';
 
-function json(body, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
-    headers: { 'Content-Type': 'application/json; charset=utf-8' },
-  });
-}
-
-function parseCount(data) {
+function pickCount(data) {
   const raw =
-    data?.count ?? data?.value ?? data?.data?.count ?? data?.data?.value;
+    data?.count ??
+    data?.value ??
+    data?.data?.count ??
+    data?.data?.value ??
+    data?.Counter?.count;
   const n = typeof raw === 'number' ? raw : Number(raw);
   return Number.isFinite(n) ? n : null;
 }
 
-function getConfig(env = {}) {
-  const key = env.COUNTER_API_KEY || env.PUBLIC_COUNTER_API_KEY || '';
-  const workspace =
-    env.COUNTER_WORKSPACE ||
-    env.PUBLIC_COUNTER_WORKSPACE ||
-    DEFAULT_WORKSPACE;
-  const name = env.COUNTER_NAME || env.PUBLIC_COUNTER_NAME || DEFAULT_NAME;
+export async function onRequest(context) {
+  try {
+    const method = context.request.method;
+    if (method !== 'GET' && method !== 'POST') {
+      return new Response('Method Not Allowed', {
+        status: 405,
+        headers: { Allow: 'GET, POST' },
+      });
+    }
 
-  const missing = [];
-  if (!key) missing.push('COUNTER_API_KEY');
+    const env = context.env || {};
+    const key = env.COUNTER_API_KEY || env.PUBLIC_COUNTER_API_KEY;
+    if (!key) {
+      return Response.json(
+        {
+          error: 'Counter not configured',
+          hint: 'Set COUNTER_API_KEY in Cloudflare Pages → Settings → Variables (Production), then Redeploy.',
+          missing: ['COUNTER_API_KEY'],
+        },
+        { status: 503 },
+      );
+    }
 
-  if (missing.length) {
-    return {
-      ok: false,
-      missing,
-      has: {
-        COUNTER_API_KEY: Boolean(env.COUNTER_API_KEY),
-        PUBLIC_COUNTER_API_KEY: Boolean(env.PUBLIC_COUNTER_API_KEY),
-        COUNTER_WORKSPACE: Boolean(env.COUNTER_WORKSPACE),
-        COUNTER_NAME: Boolean(env.COUNTER_NAME),
+    const url = method === 'POST' ? `${UPSTREAM}/up` : `${UPSTREAM}/`;
+    const upstream = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${key}`,
+        Accept: 'application/json',
       },
-    };
-  }
+    });
 
-  return { ok: true, key, workspace, name };
-}
+    const text = await upstream.text();
+    let data = null;
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch {
+      return Response.json(
+        {
+          error: 'Upstream returned non-JSON',
+          status: upstream.status,
+          body: text.slice(0, 300),
+        },
+        { status: 502 },
+      );
+    }
 
-async function upstream(env, pathSuffix) {
-  const cfg = getConfig(env);
-  if (!cfg.ok) {
-    return json(
+    if (!upstream.ok) {
+      return Response.json(
+        {
+          error: 'Upstream error',
+          status: upstream.status,
+          body: data,
+        },
+        { status: 502 },
+      );
+    }
+
+    const count = pickCount(data);
+    if (count === null) {
+      return Response.json(
+        { error: 'Unexpected counter payload', body: data },
+        { status: 502 },
+      );
+    }
+
+    return Response.json({ count });
+  } catch (err) {
+    return Response.json(
       {
-        error: 'Счётчик не настроен',
-        hint: 'В Cloudflare Pages → Settings → Variables (Production) добавьте COUNTER_API_KEY и сделайте Redeploy.',
-        missing: cfg.missing,
-        has: cfg.has,
+        error: 'Function error',
+        message: err && err.message ? String(err.message) : String(err),
       },
-      503,
+      { status: 500 },
     );
-  }
-
-  const url = `${COUNTER_API_BASE}/${encodeURIComponent(cfg.workspace)}/${encodeURIComponent(cfg.name)}${pathSuffix}`;
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: { Authorization: `Bearer ${cfg.key}` },
-  });
-
-  if (!res.ok) {
-    return json({ error: 'Upstream error', status: res.status }, 502);
-  }
-
-  const data = await res.json();
-  const count = parseCount(data);
-  if (count === null) {
-    return json({ error: 'Некорректный ответ счётчика' }, 502);
-  }
-
-  return json({ count });
-}
-
-export async function onRequestGet(context) {
-  try {
-    return await upstream(context.env, '');
-  } catch {
-    return json({ error: 'Ошибка сервера' }, 500);
-  }
-}
-
-export async function onRequestPost(context) {
-  try {
-    return await upstream(context.env, '/up');
-  } catch {
-    return json({ error: 'Ошибка сервера' }, 500);
   }
 }
