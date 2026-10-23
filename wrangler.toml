@@ -1,0 +1,9 @@
+name = "mirrors-ufa-website"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "dist"
+
+# Create the namespace in CF dashboard, then paste id here (optional for Git builds;
+# dashboard Bindings named VISITS are enough for production).
+# [[kv_namespaces]]
+# binding = "VISITS"
+# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

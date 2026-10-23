@@ -1,93 +1,51 @@
-const COUNTER_API_BASE = 'https://api.counterapi.dev/v2';
-const DEFAULT_WORKSPACE = 'codeine-castledecoygrenadegangs-team-6021';
-const DEFAULT_NAME = 'first-counter-6021';
+const KEY = 'count';
 
-function json(body, status = 200) {
-  return new Response(JSON.stringify(body), {
-    status,
+function json(data, status) {
+  return new Response(JSON.stringify(data), {
+    status: status || 200,
     headers: { 'Content-Type': 'application/json; charset=utf-8' },
   });
 }
 
-function parseCount(data) {
-  const raw =
-    data?.count ?? data?.value ?? data?.data?.count ?? data?.data?.value;
-  const n = typeof raw === 'number' ? raw : Number(raw);
-  return Number.isFinite(n) ? n : null;
-}
+export async function onRequest(context) {
+  try {
+    const method = context.request.method;
+    if (method !== 'GET' && method !== 'POST') {
+      return new Response('Method Not Allowed', {
+        status: 405,
+        headers: { Allow: 'GET, POST' },
+      });
+    }
 
-function getConfig(env = {}) {
-  const key = env.COUNTER_API_KEY || env.PUBLIC_COUNTER_API_KEY || '';
-  const workspace =
-    env.COUNTER_WORKSPACE ||
-    env.PUBLIC_COUNTER_WORKSPACE ||
-    DEFAULT_WORKSPACE;
-  const name = env.COUNTER_NAME || env.PUBLIC_COUNTER_NAME || DEFAULT_NAME;
+    const kv = context.env && context.env.VISITS;
+    if (!kv || typeof kv.get !== 'function') {
+      return json(
+        {
+          error: 'Counter not configured',
+          hint: 'Cloudflare Pages → Settings → Bindings → Add KV namespace binding named VISITS, then Redeploy.',
+          missing: ['VISITS'],
+        },
+        503,
+      );
+    }
 
-  const missing = [];
-  if (!key) missing.push('COUNTER_API_KEY');
+    const raw = await kv.get(KEY);
+    let count = Number(raw);
+    if (!Number.isFinite(count) || count < 0) count = 0;
 
-  if (missing.length) {
-    return {
-      ok: false,
-      missing,
-      has: {
-        COUNTER_API_KEY: Boolean(env.COUNTER_API_KEY),
-        PUBLIC_COUNTER_API_KEY: Boolean(env.PUBLIC_COUNTER_API_KEY),
-        COUNTER_WORKSPACE: Boolean(env.COUNTER_WORKSPACE),
-        COUNTER_NAME: Boolean(env.COUNTER_NAME),
-      },
-    };
-  }
+    if (method === 'POST') {
+      count += 1;
+      await kv.put(KEY, String(count));
+    }
 
-  return { ok: true, key, workspace, name };
-}
-
-async function upstream(env, pathSuffix) {
-  const cfg = getConfig(env);
-  if (!cfg.ok) {
+    return json({ count }, 200);
+  } catch (err) {
     return json(
       {
-        error: 'Счётчик не настроен',
-        hint: 'В Cloudflare Pages → Settings → Variables (Production) добавьте COUNTER_API_KEY и сделайте Redeploy.',
-        missing: cfg.missing,
-        has: cfg.has,
+        error: 'Function error',
+        message: err && err.message ? String(err.message) : String(err),
       },
-      503,
+      500,
     );
-  }
-
-  const url = `${COUNTER_API_BASE}/${encodeURIComponent(cfg.workspace)}/${encodeURIComponent(cfg.name)}${pathSuffix}`;
-  const res = await fetch(url, {
-    method: 'GET',
-    headers: { Authorization: `Bearer ${cfg.key}` },
-  });
-
-  if (!res.ok) {
-    return json({ error: 'Upstream error', status: res.status }, 502);
-  }
-
-  const data = await res.json();
-  const count = parseCount(data);
-  if (count === null) {
-    return json({ error: 'Некорректный ответ счётчика' }, 502);
-  }
-
-  return json({ count });
-}
-
-export async function onRequestGet(context) {
-  try {
-    return await upstream(context.env, '');
-  } catch {
-    return json({ error: 'Ошибка сервера' }, 500);
-  }
-}
-
-export async function onRequestPost(context) {
-  try {
-    return await upstream(context.env, '/up');
-  } catch {
-    return json({ error: 'Ошибка сервера' }, 500);
   }
 }
