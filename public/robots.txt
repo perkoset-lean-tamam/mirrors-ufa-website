@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /stats
 
 Sitemap: https://xn--80aanhqh6a2aj4e.xn--p1ai/sitemap-index.xml
