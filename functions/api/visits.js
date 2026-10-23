@@ -15,9 +15,10 @@ function parseCount(data) {
 }
 
 function getConfig(env) {
-  const key = env.COUNTER_API_KEY;
-  const workspace = env.COUNTER_WORKSPACE;
-  const name = env.COUNTER_NAME;
+  // Prefer non-PUBLIC names; fall back to PUBLIC_* if still set in CF Pages
+  const key = env.COUNTER_API_KEY || env.PUBLIC_COUNTER_API_KEY;
+  const workspace = env.COUNTER_WORKSPACE || env.PUBLIC_COUNTER_WORKSPACE;
+  const name = env.COUNTER_NAME || env.PUBLIC_COUNTER_NAME;
   if (!key || !workspace || !name) return null;
   return { key, workspace, name };
 }
