@@ -9,7 +9,12 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://xn--80aanhqh6a2aj4e.xn--p1ai',
-  integrations: [icon(), sitemap()],
+  integrations: [
+    icon(),
+    sitemap({
+      filter: (page) => !page.includes('/stats'),
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()]
   }

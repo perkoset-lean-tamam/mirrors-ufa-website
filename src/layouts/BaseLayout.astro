@@ -1,16 +1,29 @@
 ---
 import '../styles/global.css';
-import { MAX_URL } from '../consts';
+import {
+  COUNTER_API_BASE,
+  COUNTER_API_KEY,
+  COUNTER_ENABLED,
+  COUNTER_NAME,
+  COUNTER_WORKSPACE,
+  MAX_URL,
+  VISIT_SESSION_KEY,
+} from '../consts';
 
 export interface Props {
   title: string;
   description?: string;
+  noIndex?: boolean;
 }
 
 const {
   title,
   description = 'Зеркала на заказ в Уфе — изготовление и установка зеркал, душевых кабин, стеклянных перегородок. Замер 500 ₽, доставка 600 ₽. Работаем по Уфе и районам города.',
+  noIndex = false,
 } = Astro.props;
+
+const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
+const skipVisitCount = noIndex || pathname === '/stats' || pathname === '/404';
 ---
 
 <!doctype html>
@@ -21,6 +34,7 @@ const {
 
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
 
     <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
     <link rel="alternate" hreflang="ru" href={new URL(Astro.url.pathname, Astro.site)} />
@@ -107,5 +121,44 @@ const {
       </div>
     </header>
     <slot />
+    {
+      COUNTER_ENABLED && !skipVisitCount && (
+        <script
+          define:vars={{
+            COUNTER_API_BASE,
+            COUNTER_WORKSPACE,
+            COUNTER_NAME,
+            COUNTER_API_KEY,
+            VISIT_SESSION_KEY,
+          }}
+        >
+          (() => {
+            try {
+              if (sessionStorage.getItem(VISIT_SESSION_KEY)) return;
+            } catch {
+              return;
+            }
+
+            const url = `${COUNTER_API_BASE}/${encodeURIComponent(COUNTER_WORKSPACE)}/${encodeURIComponent(COUNTER_NAME)}/up`;
+            fetch(url, {
+              method: 'GET',
+              headers: { Authorization: `Bearer ${COUNTER_API_KEY}` },
+              keepalive: true,
+            })
+              .then((res) => {
+                if (!res.ok) return;
+                try {
+                  sessionStorage.setItem(VISIT_SESSION_KEY, '1');
+                } catch {
+                  /* ignore */
+                }
+              })
+              .catch(() => {
+                /* ignore network errors */
+              });
+          })();
+        </script>
+      )
+    }
   </body>
 </html>

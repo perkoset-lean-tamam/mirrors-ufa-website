@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  COUNTER_API_BASE,
+  COUNTER_API_KEY,
+  COUNTER_ENABLED,
+  COUNTER_NAME,
+  COUNTER_WORKSPACE,
+} from '../consts';
+---
+
+<BaseLayout
+  title="Посещения — Зеркала Уфы"
+  description="Служебная статистика посещений."
+  noIndex={true}
+>
+  <main class="min-h-[70vh] px-gutter py-section">
+    <p class="font-body text-xs uppercase tracking-[0.05em] text-ink-muted">
+      Служебно
+    </p>
+    <h1
+      class="mt-3 font-display text-[clamp(2rem,4vw,3.25rem)] leading-[1.1] tracking-[-0.01em] text-ink"
+    >
+      Посещения
+    </h1>
+    <p
+      id="stats-value"
+      class="mt-8 font-display text-[clamp(3.5rem,10vw,6rem)] leading-none tracking-[-0.02em] text-ink tabular-nums"
+      aria-live="polite"
+    >
+      …
+    </p>
+    <p id="stats-hint" class="mt-4 font-body text-sm text-ink-muted max-w-[40ch]">
+      {
+        COUNTER_ENABLED
+          ? 'Считаются уникальные сессии браузера.'
+          : 'Счётчик не настроен: задайте PUBLIC_COUNTER_* в окружении.'
+      }
+    </p>
+    <p class="mt-12">
+      <a
+        href="/"
+        class="font-body text-sm text-ink-muted underline-offset-4 hover:text-ink hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      >
+        На главную
+      </a>
+    </p>
+  </main>
+
+  {
+    COUNTER_ENABLED && (
+      <script
+        define:vars={{
+          COUNTER_API_BASE,
+          COUNTER_WORKSPACE,
+          COUNTER_NAME,
+          COUNTER_API_KEY,
+        }}
+      >
+        (() => {
+          const valueEl = document.getElementById('stats-value');
+          const hintEl = document.getElementById('stats-hint');
+          if (!valueEl) return;
+
+          const url = `${COUNTER_API_BASE}/${encodeURIComponent(COUNTER_WORKSPACE)}/${encodeURIComponent(COUNTER_NAME)}`;
+
+          fetch(url, {
+            method: 'GET',
+            headers: { Authorization: `Bearer ${COUNTER_API_KEY}` },
+          })
+            .then(async (res) => {
+              if (!res.ok) throw new Error(String(res.status));
+              const data = await res.json();
+              const raw =
+                data?.count ??
+                data?.value ??
+                data?.data?.count ??
+                data?.data?.value;
+              const n = typeof raw === 'number' ? raw : Number(raw);
+              if (!Number.isFinite(n)) throw new Error('bad count');
+              valueEl.textContent = new Intl.NumberFormat('ru-RU').format(n);
+            })
+            .catch(() => {
+              valueEl.textContent = '—';
+              if (hintEl) hintEl.textContent = 'Не удалось загрузить.';
+            });
+        })();
+      </script>
+    )
+  }
+</BaseLayout>
