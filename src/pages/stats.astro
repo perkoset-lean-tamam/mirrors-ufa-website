@@ -1,12 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import {
-  COUNTER_API_BASE,
-  COUNTER_API_KEY,
-  COUNTER_ENABLED,
-  COUNTER_NAME,
-  COUNTER_WORKSPACE,
-} from '../consts';
+import { VISITS_API_PATH } from '../consts';
 ---
 
 <BaseLayout
@@ -31,11 +25,7 @@ import {
       …
     </p>
     <p id="stats-hint" class="mt-4 font-body text-sm text-ink-muted max-w-[40ch]">
-      {
-        COUNTER_ENABLED
-          ? 'Считаются уникальные сессии браузера.'
-          : 'Счётчик не настроен: задайте PUBLIC_COUNTER_* в окружении.'
-      }
+      Считаются уникальные сессии браузера.
     </p>
     <p class="mt-12">
       <a
@@ -47,45 +37,25 @@ import {
     </p>
   </main>
 
-  {
-    COUNTER_ENABLED && (
-      <script
-        define:vars={{
-          COUNTER_API_BASE,
-          COUNTER_WORKSPACE,
-          COUNTER_NAME,
-          COUNTER_API_KEY,
-        }}
-      >
-        (() => {
-          const valueEl = document.getElementById('stats-value');
-          const hintEl = document.getElementById('stats-hint');
-          if (!valueEl) return;
+  <script define:vars={{ VISITS_API_PATH }}>
+    (() => {
+      const valueEl = document.getElementById('stats-value');
+      const hintEl = document.getElementById('stats-hint');
+      if (!valueEl) return;
 
-          const url = `${COUNTER_API_BASE}/${encodeURIComponent(COUNTER_WORKSPACE)}/${encodeURIComponent(COUNTER_NAME)}`;
-
-          fetch(url, {
-            method: 'GET',
-            headers: { Authorization: `Bearer ${COUNTER_API_KEY}` },
-          })
-            .then(async (res) => {
-              if (!res.ok) throw new Error(String(res.status));
-              const data = await res.json();
-              const raw =
-                data?.count ??
-                data?.value ??
-                data?.data?.count ??
-                data?.data?.value;
-              const n = typeof raw === 'number' ? raw : Number(raw);
-              if (!Number.isFinite(n)) throw new Error('bad count');
-              valueEl.textContent = new Intl.NumberFormat('ru-RU').format(n);
-            })
-            .catch(() => {
-              valueEl.textContent = '—';
-              if (hintEl) hintEl.textContent = 'Не удалось загрузить.';
-            });
-        })();
-      </script>
-    )
-  }
+      fetch(VISITS_API_PATH)
+        .then(async (res) => {
+          if (!res.ok) throw new Error(String(res.status));
+          const data = await res.json();
+          const n =
+            typeof data?.count === 'number' ? data.count : Number(data?.count);
+          if (!Number.isFinite(n)) throw new Error('bad count');
+          valueEl.textContent = new Intl.NumberFormat('ru-RU').format(n);
+        })
+        .catch(() => {
+          valueEl.textContent = '—';
+          if (hintEl) hintEl.textContent = 'Не удалось загрузить.';
+        });
+    })();
+  </script>
 </BaseLayout>

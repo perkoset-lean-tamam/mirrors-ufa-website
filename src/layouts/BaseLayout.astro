@@ -1,14 +1,6 @@
 ---
 import '../styles/global.css';
-import {
-  COUNTER_API_BASE,
-  COUNTER_API_KEY,
-  COUNTER_ENABLED,
-  COUNTER_NAME,
-  COUNTER_WORKSPACE,
-  MAX_URL,
-  VISIT_SESSION_KEY,
-} from '../consts';
+import { MAX_URL, VISIT_SESSION_KEY, VISITS_API_PATH } from '../consts';
 
 export interface Props {
   title: string;
@@ -122,16 +114,8 @@ const skipVisitCount = noIndex || pathname === '/stats' || pathname === '/404';
     </header>
     <slot />
     {
-      COUNTER_ENABLED && !skipVisitCount && (
-        <script
-          define:vars={{
-            COUNTER_API_BASE,
-            COUNTER_WORKSPACE,
-            COUNTER_NAME,
-            COUNTER_API_KEY,
-            VISIT_SESSION_KEY,
-          }}
-        >
+      !skipVisitCount && (
+        <script define:vars={{ VISIT_SESSION_KEY, VISITS_API_PATH }}>
           (() => {
             try {
               if (sessionStorage.getItem(VISIT_SESSION_KEY)) return;
@@ -139,10 +123,8 @@ const skipVisitCount = noIndex || pathname === '/stats' || pathname === '/404';
               return;
             }
 
-            const url = `${COUNTER_API_BASE}/${encodeURIComponent(COUNTER_WORKSPACE)}/${encodeURIComponent(COUNTER_NAME)}/up`;
-            fetch(url, {
-              method: 'GET',
-              headers: { Authorization: `Bearer ${COUNTER_API_KEY}` },
+            fetch(VISITS_API_PATH, {
+              method: 'POST',
               keepalive: true,
             })
               .then((res) => {
