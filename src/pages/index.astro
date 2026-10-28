@@ -4,7 +4,7 @@ import { Icon } from 'astro-icon/components';
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import { WHATSAPP_URL, PHONE_TEL, PHONE_DISPLAY, MAX_URL } from '../consts';
-import heroImage from '../assets/images/hero.webp';
+import heroImage from '../assets/images/herowide.jpg';
 
 const workModules = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/images/works/*.{webp,WEBP}',
@@ -64,23 +64,39 @@ const faq = [
   <main id="top" class="pt-16 lg:pt-20">
     <section
       id="hero"
-      class="lg:min-h-[100dvh] grid grid-cols-1 lg:grid-cols-12 items-start gap-10 lg:gap-16 px-gutter pt-6 lg:pt-8 pb-section"
+      class="relative isolate overflow-hidden min-h-[85dvh] lg:min-h-[calc(100dvh-5rem)] flex items-center px-gutter py-section"
     >
-      <div class="flex flex-col gap-6 lg:col-span-7">
+      <Image
+        src={heroImage}
+        alt="Зеркало в светлом интерьере"
+        widths={[768, 1280, 1920]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+        format="avif"
+        class="absolute inset-0 -z-20 w-full h-full object-cover"
+      />
+      <div
+        class="absolute inset-0 -z-10 bg-gradient-to-r from-emerald/90 via-emerald/55 via-60% to-transparent"
+        aria-hidden="true"
+      >
+      </div>
+
+      <div class="flex flex-col gap-6 max-w-[60rem]">
         <p
-          class="font-body text-xs uppercase tracking-[0.05em] text-ink-muted"
+          class="font-body text-xs uppercase tracking-[0.05em] text-brass-light"
         >
           Зеркала Уфы · Мастерская
         </p>
 
         <h1
-          class="font-display text-[clamp(3.5rem,8vw,7rem)] leading-[1.0] tracking-[-0.02em] text-ink"
+          class="font-display text-[clamp(3.5rem,8vw,7rem)] leading-[1.0] tracking-[-0.02em] text-surface"
         >
           Зеркала на заказ в Уфе
         </h1>
 
         <p
-          class="font-body text-lg md:text-xl text-ink-muted max-w-[42ch] leading-[1.55]"
+          class="font-body text-lg md:text-xl text-surface/90 max-w-[42ch] leading-[1.55]"
         >
           Изготовление и установка зеркал, душевых кабин, стеклянных
           перегородок. Индивидуальные размеры, выезд замерщика по Уфе и
@@ -92,7 +108,7 @@ const faq = [
             href={MAX_URL}
             target="_blank"
             rel="noopener noreferrer"
-            class="bg-brass text-surface rounded-sm px-6 py-3 min-h-[44px] inline-flex items-center gap-2 cursor-pointer shadow-reflection transition-shadow duration-[400ms] ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-safe:hover:translate-y-[-2px] motion-safe:hover:shadow-[0_35px_70px_-20px_rgba(30,27,24,0.24),0_10px_24px_-8px_rgba(30,27,24,0.12)] motion-safe:transition-transform motion-safe:duration-[400ms] motion-safe:ease-out"
+            class="bg-terracotta text-surface rounded-sm px-6 py-3 min-h-[44px] inline-flex items-center gap-2 cursor-pointer shadow-reflection transition-shadow duration-[400ms] ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-safe:hover:translate-y-[-2px] motion-safe:hover:shadow-[0_35px_70px_-20px_rgba(30,27,24,0.24),0_10px_24px_-8px_rgba(30,27,24,0.12)] motion-safe:transition-transform motion-safe:duration-[400ms] motion-safe:ease-out"
           >
             <Icon
               name="lucide:message-circle"
@@ -104,32 +120,16 @@ const faq = [
 
           <a
             href="#gallery"
-            class="font-body text-ink-muted underline-offset-4 min-h-[44px] inline-flex items-center cursor-pointer hover:text-ink hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            class="font-body text-surface/90 underline-offset-4 min-h-[44px] inline-flex items-center cursor-pointer hover:text-surface hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass-light focus-visible:ring-offset-2 focus-visible:ring-offset-emerald"
           >
             Смотреть работы
           </a>
         </div>
       </div>
 
-      <div class="hidden lg:block lg:col-span-5">
-        <div
-          class="aspect-[4/5] lg:aspect-[3/4] rounded shadow-reflection overflow-hidden bg-surface"
-        >
-          <Image
-            src={heroImage}
-            alt="Зеркало в латунной раме в светлом интерьере"
-            width={800}
-            height={1000}
-            loading="eager"
-            fetchpriority="high"
-            format="avif"
-            class="w-full h-full object-cover"
-          />
-        </div>
-      </div>
     </section>
 
-    <section id="services" class="py-section px-gutter bg-ink">
+    <section id="services" class="py-section px-gutter bg-emerald">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
         <div class="lg:col-span-5">
           <p
@@ -155,7 +155,7 @@ const faq = [
             {
               services.map((service) => (
                 <li class="flex items-baseline gap-6 lg:gap-10 py-6 lg:py-8">
-                  <span class="font-body text-xs text-surface/70 tracking-[0.05em] shrink-0 w-8">
+                  <span class="font-body text-xs text-brass-light tracking-[0.05em] shrink-0 w-8">
                     {service.num}
                   </span>
                   <h3 class="font-display text-xl lg:text-2xl leading-[1.2] tracking-[-0.01em] text-surface">
@@ -169,7 +169,7 @@ const faq = [
       </div>
     </section>
 
-    <section id="gallery" class="py-section px-gutter bg-background">
+    <section id="gallery" class="py-section px-gutter bg-sand">
       <header>
         <p class="font-body text-xs uppercase tracking-[0.05em] text-ink-muted">
           Работы
@@ -279,7 +279,7 @@ const faq = [
           href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
-          class="group flex flex-col gap-3 p-6 lg:p-8 min-h-[140px] bg-surface border border-line rounded hover:border-ink/30 transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          class="group flex flex-col gap-3 p-6 lg:p-8 min-h-[140px] bg-surface border border-line border-t-4 border-t-terracotta rounded hover:border-ink/30 transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <Icon
             name="simple-icons:whatsapp"
@@ -300,7 +300,7 @@ const faq = [
           href={MAX_URL}
           target="_blank"
           rel="noopener noreferrer"
-          class="group flex flex-col gap-3 p-6 lg:p-8 min-h-[140px] bg-surface border border-line rounded hover:border-ink/30 transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          class="group flex flex-col gap-3 p-6 lg:p-8 min-h-[140px] bg-surface border border-line border-t-4 border-t-terracotta rounded hover:border-ink/30 transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           {/* TODO: заменить иконку когда MAX появится в simple-icons, пока lucide:message-circle */}
           <Icon
@@ -320,7 +320,7 @@ const faq = [
 
         <a
           href={PHONE_TEL}
-          class="group flex flex-col gap-3 p-6 lg:p-8 min-h-[140px] bg-surface border border-line rounded hover:border-ink/30 transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          class="group flex flex-col gap-3 p-6 lg:p-8 min-h-[140px] bg-surface border border-line border-t-4 border-t-terracotta rounded hover:border-ink/30 transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           <Icon
             name="lucide:phone"
@@ -386,7 +386,7 @@ const faq = [
 
     </section>
 
-    <section id="faq" class="py-section px-gutter bg-background">
+    <section id="faq" class="py-section px-gutter bg-teal-soft">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
         <div class="lg:col-span-4">
           <p class="font-body text-xs uppercase tracking-[0.05em] text-ink-muted">
