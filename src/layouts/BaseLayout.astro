@@ -6,12 +6,14 @@ export interface Props {
   title: string;
   description?: string;
   noIndex?: boolean;
+  schema?: object[];
 }
 
 const {
   title,
   description = 'Зеркала на заказ в Уфе — изготовление и установка зеркал, душевых кабин, стеклянных перегородок. Замер 500 ₽, доставка 600 ₽. Работаем по Уфе и районам города.',
   noIndex = false,
+  schema = [],
 } = Astro.props;
 
 const pathname = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -74,9 +76,9 @@ const skipVisitCount = noIndex || pathname === '/stats' || pathname === '/404';
         name: 'Зеркала Уфы',
         description:
           'Изготовление и установка зеркал, душевых кабин, стеклянных перегородок на заказ в Уфе и районах.',
-        url: 'https://mirrors-ufa.ru',
+        url: Astro.site?.origin,
         telephone: '+79373398232',
-        image: 'https://mirrors-ufa.ru/og-image.jpg',
+        image: new URL('/og-image.jpg', Astro.site).href,
         address: {
           '@type': 'PostalAddress',
           addressLocality: 'Уфа',
@@ -94,6 +96,7 @@ const skipVisitCount = noIndex || pathname === '/stats' || pathname === '/404';
         },
       })}
     />
+    {schema.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
   </head>
   <body class="bg-background font-body text-ink antialiased">
     <header class="sticky top-0 z-50 bg-background/85 backdrop-blur-md border-b border-line">
@@ -102,10 +105,10 @@ const skipVisitCount = noIndex || pathname === '/stats' || pathname === '/404';
           Зеркала Уфы
         </a>
         <nav class="hidden md:flex items-center gap-8" aria-label="Основная навигация">
-          <a href="#services" class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300">Услуги</a>
-          <a href="#gallery" class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300">Работы</a>
-          <a href="#contacts" class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300">Контакты</a>
-          <a href="#faq" class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300">Вопросы</a>
+          <a href="/#services" class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300">Услуги</a>
+          <a href="/#gallery" class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300">Работы</a>
+          <a href="/#contacts" class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300">Контакты</a>
+          <a href="/#faq" class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300">Вопросы</a>
         </nav>
         <a href={MAX_URL} target="_blank" rel="noopener noreferrer" class="hidden md:inline-flex items-center gap-2 bg-brass text-surface rounded-sm px-5 py-2 min-h-[44px] font-body text-sm transition-transform duration-300 motion-safe:hover:translate-y-[-1px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2">
           Написать

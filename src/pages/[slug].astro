@@ -1,0 +1,202 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Icon } from 'astro-icon/components';
+import { WHATSAPP_URL, PHONE_TEL, PHONE_DISPLAY, MAX_URL } from '../consts';
+import { servicePages, type ServicePage } from '../data/service-pages';
+
+export function getStaticPaths() {
+  return servicePages.map((page) => ({
+    params: { slug: page.slug },
+    props: { page },
+  }));
+}
+
+const { page } = Astro.props as { page: ServicePage };
+const base = Astro.site!.origin;
+const pageUrl = `${base}/${page.slug}`;
+
+const steps = [
+  { num: '01', title: 'Заявка', text: 'Пишете или звоните, описываете задачу.' },
+  { num: '02', title: 'Замер', text: 'Выезжаем, снимаем размеры, обсуждаем детали. 500 ₽ по городу.' },
+  { num: '03', title: 'Изготовление', text: 'Делаем изделие в мастерской. Срок называем после замера.' },
+  { num: '04', title: 'Монтаж', text: 'Привозим (600 ₽ по городу) и устанавливаем на месте.' },
+];
+const stepColors = ['bg-emerald', 'bg-terracotta', 'bg-brass-dark', 'bg-petrol'];
+
+const others = servicePages.filter((p) => p.slug !== page.slug);
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: page.serviceName,
+    serviceType: page.serviceName,
+    url: pageUrl,
+    provider: { '@type': 'LocalBusiness', name: 'Зеркала Уфы', telephone: '+79373398232', url: base },
+    areaServed: [
+      { '@type': 'City', name: 'Уфа' },
+      { '@type': 'AdministrativeArea', name: 'Уфимский район' },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: page.faq.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Главная', item: `${base}/` },
+      { '@type': 'ListItem', position: 2, name: page.h1, item: pageUrl },
+    ],
+  },
+];
+---
+
+<BaseLayout title={page.title} description={page.description} schema={schema}>
+  <main id="top" class="pt-16 lg:pt-20">
+    <article>
+      <section class="px-gutter pt-8 lg:pt-12 pb-section bg-emerald text-surface">
+        <nav aria-label="Хлебные крошки" class="font-body text-xs text-surface/80">
+          <a href="/" class="hover:underline">Главная</a>
+          <span aria-hidden="true"> / </span>
+          <span>{page.h1}</span>
+        </nav>
+        <h1 class="mt-6 font-display text-[clamp(2.5rem,6vw,5rem)] leading-[1.05] tracking-[-0.02em] max-w-[22ch]">
+          {page.h1}
+        </h1>
+        <p class="mt-6 font-body text-lg md:text-xl text-surface/90 max-w-[50ch] leading-[1.55]">
+          {page.lead}
+        </p>
+        <div class="mt-8 flex flex-wrap gap-4">
+          <a
+            href={PHONE_TEL}
+            class="bg-terracotta text-surface rounded-sm px-6 py-3 min-h-[44px] inline-flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass-light focus-visible:ring-offset-2 focus-visible:ring-offset-emerald"
+          >
+            <Icon name="lucide:phone" class="w-5 h-5" aria-hidden="true" />
+            {PHONE_DISPLAY}
+          </a>
+          <a
+            href={MAX_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="border border-surface/60 text-surface rounded-sm px-6 py-3 min-h-[44px] inline-flex items-center gap-2 hover:bg-surface/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass-light focus-visible:ring-offset-2 focus-visible:ring-offset-emerald"
+          >
+            <Icon name="lucide:message-circle" class="w-5 h-5" aria-hidden="true" />
+            Написать в MAX
+          </a>
+        </div>
+      </section>
+
+      <section class="py-section px-gutter bg-background">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+          <div class="lg:col-span-7">
+            {page.paragraphs.map((text) => (
+              <p class="font-body text-base lg:text-lg text-ink leading-[1.65] max-w-[60ch] mb-5">
+                {text}
+              </p>
+            ))}
+          </div>
+          <div class="lg:col-span-5">
+            <h2 class="font-display text-2xl lg:text-3xl text-ink tracking-[-0.01em]">Что входит</h2>
+            <ul class="mt-5 divide-y divide-line border-y border-line">
+              {page.features.map((f) => (
+                <li class="py-3 font-body text-ink leading-[1.5] flex gap-3">
+                  <Icon name="lucide:check" class="w-5 h-5 mt-0.5 shrink-0 text-emerald" aria-hidden="true" />
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="py-section px-gutter bg-sand">
+        <h2 class="font-display text-[clamp(2rem,4vw,3rem)] leading-[1.1] text-ink tracking-[-0.01em]">
+          Как мы работаем
+        </h2>
+        <ol class="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+          {steps.map((s, i) => (
+            <li class:list={['flex flex-col gap-8 p-6 lg:p-8 min-h-[180px] rounded text-surface', stepColors[i]]}>
+              <span class="font-body text-xs tracking-[0.05em] text-surface/80">{s.num}</span>
+              <div>
+                <h3 class="font-display text-xl lg:text-2xl">{s.title}</h3>
+                <p class="mt-2 font-body text-sm text-surface/90 leading-[1.5]">{s.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section class="py-section px-gutter bg-teal-soft">
+        <h2 class="font-display text-[clamp(2rem,4vw,3rem)] leading-[1.1] text-ink tracking-[-0.01em]">
+          Частые вопросы
+        </h2>
+        <div class="mt-8 border-t border-line max-w-[70ch]">
+          {page.faq.map((item) => (
+            <div class="py-6 border-b border-line">
+              <h3 class="font-display text-xl lg:text-2xl text-ink">{item.q}</h3>
+              <p class="mt-3 font-body text-ink-muted leading-[1.6]">{item.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section class="py-section px-gutter bg-background">
+        <h2 class="font-display text-[clamp(2rem,4vw,3rem)] leading-[1.1] text-ink tracking-[-0.01em]">
+          Обсудим ваш проект
+        </h2>
+        <p class="mt-4 font-body text-ink-muted max-w-[50ch]">
+          Олег Артемьев, руководитель-исполнитель. Опишите задачу, и мы назовём ориентир по цене.
+        </p>
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+          <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" class="flex flex-col gap-3 p-6 lg:p-8 min-h-[140px] bg-emerald text-surface rounded hover:brightness-110 transition-[filter] duration-300">
+            <Icon name="simple-icons:whatsapp" class="w-6 h-6 text-brass-light" aria-hidden="true" />
+            <span class="font-body text-xs uppercase tracking-[0.05em] text-surface/80">WhatsApp</span>
+            <span class="font-body text-lg lg:text-xl">Написать</span>
+          </a>
+          <a href={MAX_URL} target="_blank" rel="noopener noreferrer" class="flex flex-col gap-3 p-6 lg:p-8 min-h-[140px] bg-petrol text-surface rounded hover:brightness-110 transition-[filter] duration-300">
+            <Icon name="lucide:message-circle" class="w-6 h-6 text-brass-light" aria-hidden="true" />
+            <span class="font-body text-xs uppercase tracking-[0.05em] text-surface/80">MAX</span>
+            <span class="font-body text-lg lg:text-xl">Написать</span>
+          </a>
+          <a href={PHONE_TEL} class="flex flex-col gap-3 p-6 lg:p-8 min-h-[140px] bg-terracotta text-surface rounded hover:brightness-110 transition-[filter] duration-300">
+            <Icon name="lucide:phone" class="w-6 h-6 text-brass-light" aria-hidden="true" />
+            <span class="font-body text-xs uppercase tracking-[0.05em] text-surface/80">Позвонить</span>
+            <span class="font-body text-lg lg:text-xl tabular-nums">{PHONE_DISPLAY}</span>
+          </a>
+        </div>
+
+        <h2 class="mt-12 font-display text-2xl text-ink">Другие услуги</h2>
+        <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+          {others.map((p) => (
+            <li>
+              <a href={`/${p.slug}`} class="font-body text-ink-muted underline underline-offset-4 hover:text-ink">
+                {p.h1}
+              </a>
+            </li>
+          ))}
+          <li>
+            <a href="/#gallery" class="font-body text-ink-muted underline underline-offset-4 hover:text-ink">
+              Примеры работ
+            </a>
+          </li>
+        </ul>
+      </section>
+    </article>
+  </main>
+
+  <footer class="border-t border-line bg-background">
+    <div class="px-gutter py-8 font-body text-sm text-ink-muted">
+      <a href="/" class="font-display text-xl text-ink">Зеркала Уфы</a>
+      <p class="mt-2">Изготовление и установка зеркал · Уфа, Уфимский район ·
+        <a href={PHONE_TEL} class="hover:text-ink">{PHONE_DISPLAY}</a>
+      </p>
+    </div>
+  </footer>
+</BaseLayout>

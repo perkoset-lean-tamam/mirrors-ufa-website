@@ -19,18 +19,18 @@ const works = Object.entries(workModules)
   })
   .map(([path, mod], index) => ({
     src: mod.default,
-    alt: `Пример работы — фото ${index + 1}`,
+    alt: `Зеркало и изделия из стекла на заказ в Уфе, пример работы ${index + 1}`,
     path,
   }));
 
 const services = [
-  { num: '01', title: 'Изготовление и установка зеркал' },
-  { num: '02', title: 'Зеркала с подсветкой и подогревом' },
-  { num: '03', title: 'Душевые кабины из закалённого стекла' },
-  { num: '04', title: 'Стеклянные двери и перегородки' },
+  { num: '01', title: 'Изготовление и установка зеркал', href: '/zerkala-s-montazhom' },
+  { num: '02', title: 'Зеркала с подсветкой и подогревом', href: '/zerkala-s-podsvetkoj' },
+  { num: '03', title: 'Душевые кабины из закалённого стекла', href: '/dushevye-kabiny' },
+  { num: '04', title: 'Стеклянные двери и перегородки', href: '/steklyannye-peregorodki' },
   { num: '05', title: 'Изделия из стекла и триплекс' },
   { num: '06', title: 'Замена стекла в межкомнатных дверях' },
-  { num: '07', title: 'Замена зеркал в шкафах-купе' },
+  { num: '07', title: 'Замена зеркал в шкафах-купе', href: '/zamena-zerkal-v-shkafu-kupe' },
   { num: '08', title: 'Фотопечать и нанесение рисунка на стекло' },
 ];
 
@@ -58,9 +58,23 @@ const faq = [
     a: 'Наличными или переводом. Предоплата возможна — условия согласуем при заказе.',
   },
 ];
+const faqSchema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((item) => ({
+      '@type': 'Question',
+      name: item.q,
+      acceptedAnswer: { '@type': 'Answer', text: item.a },
+    })),
+  },
+];
 ---
 
-<BaseLayout title="Зеркала Уфы — изготовление и установка зеркал на заказ">
+<BaseLayout
+  title="Зеркала на заказ в Уфе с монтажом — цены, замер 500 ₽ | Зеркала Уфы"
+  schema={faqSchema}
+>
   <main id="top" class="pt-16 lg:pt-20">
     <section
       id="hero"
@@ -148,15 +162,20 @@ const faq = [
           services.map((service, i) => (
             <li
               class:list={[
-                'flex flex-col justify-between gap-10 p-6 lg:p-8 min-h-[180px] rounded text-surface',
+                'relative flex flex-col justify-between gap-10 p-6 lg:p-8 min-h-[180px] rounded text-surface',
                 ['bg-emerald', 'bg-terracotta', 'bg-brass-dark', 'bg-petrol'][i % 4],
+                service.href && 'transition-[filter] duration-300 hover:brightness-110',
               ]}
             >
               <span class="font-body text-xs tracking-[0.05em] text-surface/80">
                 {service.num}
               </span>
               <h3 class="font-display text-xl lg:text-2xl leading-[1.2] tracking-[-0.01em]">
-                {service.title}
+                {service.href ? (
+                  <a href={service.href} class="after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-brass-light">{service.title}</a>
+                ) : (
+                  service.title
+                )}
               </h3>
             </li>
           ))
@@ -439,6 +458,36 @@ const faq = [
             class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300"
           >
             Контакты
+          </a>
+          <a
+            href="/zerkala-na-zakaz"
+            class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300"
+          >
+            Зеркала на заказ
+          </a>
+          <a
+            href="/zerkala-s-montazhom"
+            class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300"
+          >
+            Зеркала с монтажом
+          </a>
+          <a
+            href="/dushevye-kabiny"
+            class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300"
+          >
+            Душевые кабины
+          </a>
+          <a
+            href="/steklyannye-peregorodki"
+            class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300"
+          >
+            Перегородки
+          </a>
+          <a
+            href="/zamena-zerkal-v-shkafu-kupe"
+            class="font-body text-sm text-ink-muted hover:text-ink transition-colors duration-300"
+          >
+            Замена в шкафу-купе
           </a>
         </nav>
 
