@@ -8,6 +8,7 @@ import {
   PHONE_TEL,
   PHONE_DISPLAY,
   MAX_URL,
+  MAX_CHANNEL_URL,
   ADDRESS_FULL,
   WORK_HOURS,
   MAP_EMBED_URL,
@@ -245,7 +246,7 @@ const faqSchema = [
           }
         </ul>
 
-        <div class="mt-6 flex items-center gap-2 px-gutter">
+        <div class="mt-6 flex flex-wrap items-center gap-2 px-gutter">
           <button
             type="button"
             id="gallery-prev"
@@ -266,6 +267,15 @@ const faqSchema = [
             Вперёд
             <Icon name="lucide:chevron-right" class="w-4 h-4 shrink-0 transition-transform duration-[400ms] ease-out motion-safe:group-hover/nav:translate-x-0.5" aria-hidden="true" />
           </button>
+          <a
+            href={MAX_CHANNEL_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group/more ml-auto inline-flex items-center gap-2 min-h-[44px] font-body text-sm text-ink underline underline-offset-4 decoration-brass hover:text-brass focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-sand"
+          >
+            Больше работ в MAX
+            <Icon name="lucide:arrow-up-right" class="w-4 h-4 shrink-0 transition-transform duration-[400ms] ease-out motion-safe:group-hover/more:translate-x-0.5 motion-safe:group-hover/more:-translate-y-0.5" aria-hidden="true" />
+          </a>
         </div>
       </div>
     </section>
