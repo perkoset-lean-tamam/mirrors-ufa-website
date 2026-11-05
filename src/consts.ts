@@ -3,6 +3,7 @@ export const WHATSAPP_URL =
 export const PHONE_TEL = 'tel:+79373398232';
 export const PHONE_DISPLAY = '+7 937 339 82 32';
 export const MAX_URL = 'https://web.max.ru/63876228';
+export const DEVELOPER_URL = 'https://delo-102.ru/';
 export const MAX_CHANNEL_URL =
   'https://max.ru/join/bJjWbHKYYZtKKelQ8cN05FbndpF-ZdbbgyzJYi0VQi0';
 
