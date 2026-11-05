@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { MAX_URL, VISIT_SESSION_KEY, VISITS_API_PATH } from '../consts';
+import { MAX_URL, VISIT_SESSION_KEY, VISITS_API_PATH, ADDRESS_STREET, MAP_ROUTE_URL } from '../consts';
 
 export interface Props {
   title: string;
@@ -75,12 +75,13 @@ const skipVisitCount = noIndex || pathname === '/stats' || pathname === '/404';
         '@type': 'LocalBusiness',
         name: 'Зеркала Уфы',
         description:
-          'Изготовление и установка зеркал, душевых кабин, стеклянных перегородок на заказ в Уфе и районах.',
+          'Изготовление и установка зеркал, душевых кабин, стеклянных перегородок на заказ в Уфе и районах. Более 20 лет опыта.',
         url: Astro.site?.origin,
         telephone: '+79373398232',
         image: new URL('/og-image.jpg', Astro.site).href,
         address: {
           '@type': 'PostalAddress',
+          streetAddress: ADDRESS_STREET,
           addressLocality: 'Уфа',
           addressRegion: 'Республика Башкортостан',
           addressCountry: 'RU',
@@ -89,6 +90,13 @@ const skipVisitCount = noIndex || pathname === '/stats' || pathname === '/404';
           { '@type': 'City', name: 'Уфа' },
           { '@type': 'AdministrativeArea', name: 'Уфимский район' },
         ],
+        hasMap: MAP_ROUTE_URL,
+        openingHoursSpecification: {
+          '@type': 'OpeningHoursSpecification',
+          dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+          opens: '09:00',
+          closes: '18:00',
+        },
         priceRange: '500-50000 ₽',
         founder: {
           '@type': 'Person',

@@ -6,3 +6,9 @@ export const MAX_URL = 'https://web.max.ru/63876228';
 
 export const VISIT_SESSION_KEY = 'zerkala-visit-counted';
 export const VISITS_API_PATH = '/api/visits';
+
+export const ADDRESS_FULL = 'Уфа, Силикатная улица, 25В';
+export const ADDRESS_STREET = 'Силикатная улица, 25В';
+export const WORK_HOURS = 'Пн–Пт 9:00–18:00, перерыв 12:00–13:00';
+export const MAP_EMBED_URL = `https://yandex.ru/map-widget/v1/?text=${encodeURIComponent(ADDRESS_FULL)}&z=16`;
+export const MAP_ROUTE_URL = `https://yandex.ru/maps/?text=${encodeURIComponent(ADDRESS_FULL)}`;

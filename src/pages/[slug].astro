@@ -1,7 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { Icon } from 'astro-icon/components';
-import { WHATSAPP_URL, PHONE_TEL, PHONE_DISPLAY, MAX_URL } from '../consts';
+import {
+  WHATSAPP_URL,
+  PHONE_TEL,
+  PHONE_DISPLAY,
+  MAX_URL,
+  ADDRESS_FULL,
+  WORK_HOURS,
+  MAP_ROUTE_URL,
+} from '../consts';
 import { servicePages, type ServicePage } from '../data/service-pages';
 
 export function getStaticPaths() {
@@ -172,6 +180,11 @@ const schema = [
           </a>
         </div>
 
+        <p class="mt-10 font-body text-ink">
+          <Icon name="lucide:map-pin" class="inline w-5 h-5 -mt-1 text-emerald" aria-hidden="true" />
+          Мастерская: {ADDRESS_FULL}. {WORK_HOURS}.
+          <a href={MAP_ROUTE_URL} target="_blank" rel="noopener noreferrer" class="underline underline-offset-4 text-ink-muted hover:text-ink">Построить маршрут</a>
+        </p>
         <h2 class="mt-12 font-display text-2xl text-ink">Другие услуги</h2>
         <ul class="mt-4 flex flex-wrap gap-x-6 gap-y-2">
           {others.map((p) => (
@@ -194,7 +207,7 @@ const schema = [
   <footer class="border-t border-line bg-background">
     <div class="px-gutter py-8 font-body text-sm text-ink-muted">
       <a href="/" class="font-display text-xl text-ink">Зеркала Уфы</a>
-      <p class="mt-2">Изготовление и установка зеркал · Уфа, Уфимский район ·
+      <p class="mt-2">Изготовление и установка зеркал · {ADDRESS_FULL} ·
         <a href={PHONE_TEL} class="hover:text-ink">{PHONE_DISPLAY}</a>
       </p>
     </div>
