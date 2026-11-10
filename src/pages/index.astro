@@ -16,7 +16,6 @@ import {
   MAP_ROUTE_URL,
 } from '../consts';
 import heroImage from '../assets/images/herowide.jpg';
-import { servicePages } from '../data/service-pages';
 
 const workModules = import.meta.glob<{ default: ImageMetadata }>(
   '../assets/images/works/*.{webp,WEBP}',
@@ -194,23 +193,6 @@ const faqSchema = [
         }
       </ul>
 
-      <div class="mt-10 lg:mt-14">
-        <h3 class="font-display text-2xl text-ink">Что ещё мы делаем</h3>
-        <ul class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-2">
-          {
-            servicePages.map((p) => (
-              <li>
-                <a
-                  href={`/${p.slug}`}
-                  class="inline-flex items-center min-h-[44px] font-body text-ink-muted underline underline-offset-4 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brass focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-                >
-                  {p.h1}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
     </section>
 
     <section id="gallery" class="py-section px-gutter bg-sand">
