@@ -124,6 +124,26 @@ const skipVisitCount = noIndex || pathname === '/stats' || pathname === '/404';
       </div>
     </header>
     <slot />
+    <script define:vars={{ VISITS_API_PATH }}>
+      (() => {
+        const els = document.querySelectorAll('[data-visits]');
+        if (!els.length) return;
+        fetch(VISITS_API_PATH)
+          .then((res) => (res.ok ? res.json() : Promise.reject()))
+          .then((data) => {
+            const n = Number(data?.count);
+            if (!Number.isFinite(n)) return;
+            const text = 'Посещений: ' + new Intl.NumberFormat('ru-RU').format(n);
+            els.forEach((el) => {
+              el.textContent = text;
+              el.hidden = false;
+            });
+          })
+          .catch(() => {
+            /* keep hidden */
+          });
+      })();
+    </script>
     {
       !skipVisitCount && (
         <script define:vars={{ VISIT_SESSION_KEY, VISITS_API_PATH }}>
