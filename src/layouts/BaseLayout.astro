@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { MAX_URL, VISIT_SESSION_KEY, VISITS_API_PATH, ADDRESS_STREET, MAP_ROUTE_URL } from '../consts';
+import { MAX_URL, VISIT_SESSION_KEY, VISITS_API_PATH, ADDRESS_STREET, MAP_ROUTE_URL, METRIKA_ID } from '../consts';
 
 export interface Props {
   title: string;
@@ -105,7 +105,28 @@ const skipVisitCount = noIndex || pathname === '/stats' || pathname === '/404';
       })}
     />
     {schema.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
-  </head>
+    {
+      !skipVisitCount && (
+        <script is:inline define:vars={{ METRIKA_ID }}>
+          (function (m, e, t, r, i, k, a) {
+            m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
+            m[i].l = 1 * new Date();
+            for (var j = 0; j < document.scripts.length; j++) { if (document.scripts[j].src === r) { return; } }
+            k = e.createElement(t); a = e.getElementsByTagName(t)[0]; k.async = 1; k.src = r; a.parentNode.insertBefore(k, a);
+          })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+          ym(METRIKA_ID, 'init', { clickmap: true, trackLinks: true, accurateTrackBounce: true });
+          document.addEventListener('click', function (e) {
+            var a = e.target.closest && e.target.closest('a[href]');
+            if (!a) return;
+            var h = a.getAttribute('href') || '';
+            var goal = h.indexOf('tel:') === 0 ? 'phone_click'
+              : h.indexOf('max.ru') !== -1 ? 'max_click'
+              : h.indexOf('wa.me') !== -1 ? 'whatsapp_click' : null;
+            if (goal) ym(METRIKA_ID, 'reachGoal', goal);
+          });
+        </script>
+      )
+    }  </head>
   <body class="bg-background font-body text-ink antialiased">
     <header class="sticky top-0 z-50 bg-background/85 backdrop-blur-md border-b border-line">
       <div class="px-gutter h-16 lg:h-20 flex items-center justify-between gap-6">
