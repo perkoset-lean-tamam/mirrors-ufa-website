@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { VISITS_API_PATH } from '../consts';
 ---
 
 <BaseLayout
@@ -17,15 +16,21 @@ import { VISITS_API_PATH } from '../consts';
     >
       Посещения
     </h1>
+    <p class="mt-8 font-body text-sm text-ink-muted">Всего посещений</p>
     <p
-      id="stats-value"
-      class="mt-8 font-display text-[clamp(3.5rem,10vw,6rem)] leading-none tracking-[-0.02em] text-ink tabular-nums"
+      id="stats-value" data-stat="count"
+      class="mt-3 font-display text-[clamp(3.5rem,10vw,6rem)] leading-none tracking-[-0.02em] text-ink tabular-nums"
       aria-live="polite"
     >
       …
     </p>
+    <dl class="mt-8 grid gap-6 sm:grid-cols-3" aria-live="polite">
+      <div><dt class="font-body text-sm text-ink-muted">Посетителей сегодня</dt><dd class="mt-2 font-display text-5xl text-ink tabular-nums" data-stat="today">…</dd></div>
+      <div><dt class="font-body text-sm text-ink-muted">Повторных посещений сегодня</dt><dd class="mt-2 font-display text-5xl text-ink tabular-nums" data-stat="returningToday">…</dd></div>
+      <div><dt class="font-body text-sm text-ink-muted">Повторных посещений всего</dt><dd class="mt-2 font-display text-5xl text-ink tabular-nums" data-stat="returning">…</dd></div>
+    </dl>
     <p id="stats-hint" class="mt-4 font-body text-sm text-ink-muted max-w-[40ch]">
-      Считаются уникальные сессии браузера.
+      Всего считаются сессии браузера. Сегодня — уникальные браузеры за день по времени Уфы. Повторные посещения — новые сессии ранее заходивших браузеров. Новые показатели накапливаются с момента обновления счётчика.
     </p>
     <p class="mt-12">
       <a
@@ -37,25 +42,4 @@ import { VISITS_API_PATH } from '../consts';
     </p>
   </main>
 
-  <script define:vars={{ VISITS_API_PATH }}>
-    (() => {
-      const valueEl = document.getElementById('stats-value');
-      const hintEl = document.getElementById('stats-hint');
-      if (!valueEl) return;
-
-      fetch(VISITS_API_PATH)
-        .then(async (res) => {
-          if (!res.ok) throw new Error(String(res.status));
-          const data = await res.json();
-          const n =
-            typeof data?.count === 'number' ? data.count : Number(data?.count);
-          if (!Number.isFinite(n)) throw new Error('bad count');
-          valueEl.textContent = new Intl.NumberFormat('ru-RU').format(n);
-        })
-        .catch(() => {
-          valueEl.textContent = '—';
-          if (hintEl) hintEl.textContent = 'Не удалось загрузить.';
-        });
-    })();
-  </script>
 </BaseLayout>

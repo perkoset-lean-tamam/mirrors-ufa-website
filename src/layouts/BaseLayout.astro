@@ -147,54 +147,41 @@ const skipVisitCount = noIndex || pathname === '/stats' || pathname === '/404';
       </div>
     </header>
     <slot />
-    <script define:vars={{ VISITS_API_PATH }}>
-      (() => {
-        const els = document.querySelectorAll('[data-visits]');
-        if (!els.length) return;
-        fetch(VISITS_API_PATH)
-          .then((res) => (res.ok ? res.json() : Promise.reject()))
-          .then((data) => {
-            const n = Number(data?.count);
-            if (!Number.isFinite(n)) return;
-            const text = 'Посещений: ' + new Intl.NumberFormat('ru-RU').format(n);
-            els.forEach((el) => {
-              el.textContent = text;
-              el.hidden = false;
-            });
-          })
-          .catch(() => {
-            /* keep hidden */
+    <script define:vars={{ VISITS_API_PATH, VISIT_SESSION_KEY, skipVisitCount }}>
+      (async () => {
+        const format = (n) => new Intl.NumberFormat('ru-RU').format(n);
+        const date = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Yekaterinburg', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+        let counted = null;
+        try { counted = sessionStorage.getItem(VISIT_SESSION_KEY); } catch { /* storage unavailable */ }
+        const shouldCount = !skipVisitCount && counted !== date;
+        try {
+          const res = await fetch(VISITS_API_PATH, {
+            method: shouldCount ? 'POST' : 'GET', cache: 'no-store',
+            ...(shouldCount ? { keepalive: true, headers: { 'X-Visit-Rollover': counted ? '1' : '0' } } : {}),
           });
+          if (!res.ok) throw new Error('Counter unavailable');
+          const data = await res.json();
+          if (shouldCount) {
+            try { sessionStorage.setItem(VISIT_SESSION_KEY, data.date); } catch { /* storage unavailable */ }
+          }
+          document.querySelectorAll('[data-visits]').forEach((el) => {
+            el.replaceChildren();
+            ['Посещений: ' + format(data.count), 'Сегодня посетителей: ' + format(data.today)].forEach((text) => {
+              const line = document.createElement('span');
+              line.style.display = 'block'; line.textContent = text; el.append(line);
+            });
+            el.hidden = false;
+          });
+          document.querySelectorAll('[data-stat]').forEach((el) => {
+            const value = data[el.dataset.stat];
+            el.textContent = Number.isFinite(value) ? format(value) : '—';
+          });
+        } catch {
+          document.querySelectorAll('[data-stat]').forEach((el) => { el.textContent = '—'; });
+          const hint = document.getElementById('stats-hint');
+          if (hint) hint.textContent = 'Не удалось загрузить статистику. Попробуйте обновить страницу.';
+        }
       })();
     </script>
-    {
-      !skipVisitCount && (
-        <script define:vars={{ VISIT_SESSION_KEY, VISITS_API_PATH }}>
-          (() => {
-            try {
-              if (sessionStorage.getItem(VISIT_SESSION_KEY)) return;
-            } catch {
-              return;
-            }
-
-            fetch(VISITS_API_PATH, {
-              method: 'POST',
-              keepalive: true,
-            })
-              .then((res) => {
-                if (!res.ok) return;
-                try {
-                  sessionStorage.setItem(VISIT_SESSION_KEY, '1');
-                } catch {
-                  /* ignore */
-                }
-              })
-              .catch(() => {
-                /* ignore network errors */
-              });
-          })();
-        </script>
-      )
-    }
   </body>
 </html>
