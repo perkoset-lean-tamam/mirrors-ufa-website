@@ -24,13 +24,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     >
       …
     </p>
+    <p class="mt-3 font-body text-sm text-ink-muted max-w-[40ch]">
+      Считаются сессии браузера.
+    </p>
     <dl class="mt-8 grid gap-6 sm:grid-cols-3" aria-live="polite">
-      <div><dt class="font-body text-sm text-ink-muted">Посетителей сегодня</dt><dd class="mt-2 font-display text-5xl text-ink tabular-nums" data-stat="today">…</dd></div>
-      <div><dt class="font-body text-sm text-ink-muted">Повторных посещений сегодня</dt><dd class="mt-2 font-display text-5xl text-ink tabular-nums" data-stat="returningToday">…</dd></div>
-      <div><dt class="font-body text-sm text-ink-muted">Повторных посещений всего</dt><dd class="mt-2 font-display text-5xl text-ink tabular-nums" data-stat="returning">…</dd></div>
+      <div>
+        <dt class="font-body text-sm text-ink-muted">Посетителей сегодня</dt>
+        <dd class="mt-2 font-display text-5xl text-ink tabular-nums" data-stat="today">…</dd>
+        <dd class="mt-3 font-body text-sm text-ink-muted max-w-[40ch]">Уникальные браузеры за день по времени Уфы.</dd>
+      </div>
+      <div>
+        <dt class="font-body text-sm text-ink-muted">Повторных посещений сегодня</dt>
+        <dd class="mt-2 font-display text-5xl text-ink tabular-nums" data-stat="returningToday">…</dd>
+        <dd class="mt-3 font-body text-sm text-ink-muted max-w-[40ch]">Новые сессии ранее заходивших браузеров за сегодня по времени Уфы.</dd>
+      </div>
+      <div>
+        <dt class="font-body text-sm text-ink-muted">Повторных посещений всего</dt>
+        <dd class="mt-2 font-display text-5xl text-ink tabular-nums" data-stat="returning">…</dd>
+        <dd class="mt-3 font-body text-sm text-ink-muted max-w-[40ch]">Новые сессии ранее заходивших браузеров за всё время сбора данных.</dd>
+      </div>
     </dl>
-    <p id="stats-hint" class="mt-4 font-body text-sm text-ink-muted max-w-[40ch]">
-      Всего считаются сессии браузера. Сегодня — уникальные браузеры за день по времени Уфы. Повторные посещения — новые сессии ранее заходивших браузеров. Новые показатели накапливаются с момента обновления счётчика.
+    <p id="stats-hint" class="mt-8 font-body text-sm text-ink-muted max-w-[60ch]">
+      Новые показатели накапливаются с момента обновления счётчика.
     </p>
     <p class="mt-12">
       <a
