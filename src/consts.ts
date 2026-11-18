@@ -2,7 +2,7 @@ export const WHATSAPP_URL =
   'https://wa.me/79373398232?text=Здравствуйте!%20Интересует%20зеркало%20на%20заказ';
 export const PHONE_TEL = 'tel:+79373398232';
 export const PHONE_DISPLAY = '+7 937 339 82 32';
-export const MAX_URL = 'https://web.max.ru/63876228';
+export const MAX_URL = 'https://max.ru/u/f9LHodD0cOLVEf1PEGe80zko-hIFmWN4CjZBGwKa5aURa_xJ0htOzBNWE64';
 export const DEVELOPER_URL = 'https://delo-102.ru/';
 export const MAX_CHANNEL_URL =
   'https://max.ru/join/bJjWbHKYYZtKKelQ8cN05FbndpF-ZdbbgyzJYi0VQi0';
